@@ -41,6 +41,8 @@
         
         @include('functionPage.sidebar')
 
+        @include('functionPage.toastr')
+
         <div class="page-wrapper" style="min-height: 598px;">
             <div class="container-fluid">
                 @yield('content')
