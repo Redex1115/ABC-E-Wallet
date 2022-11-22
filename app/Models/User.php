@@ -15,6 +15,14 @@ class User extends Authenticatable implements Customer
 {
     use HasApiTokens, HasFactory, Notifiable, CanPay, HasWallets;
 
+    const MEMBER = 1;
+    const AGENT = 2;
+    const BRANCH = 3;
+
+    const TABLE = 'users';
+
+    protected $table = self::TABLE;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,9 +30,16 @@ class User extends Authenticatable implements Customer
      */
     protected $fillable = [
         'id',
-        'name',
+        'account_id',
         'email',
+        'loginID',
         'password',
+        'currency',
+        'accountLevel',
+        'created_by',
+        'deleted_by',
+        'credit_limit',
+        'join_date',
     ];
 
     /**
@@ -45,5 +60,25 @@ class User extends Authenticatable implements Customer
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function accountLevel()
+    {
+        return (int) $this->accountLevel;
+    }
+
+    public function isBranch(): bool
+    {
+        return $this->accountLevel() === self::BRANCH;
+    }
+
+    public function isAgent(): bool
+    {
+        return $this->accountLevel() === self::AGENT;
+    }
+    
+    public function isMember(): bool
+    {
+        return $this->accountLevel() === self::MEMBER;
+    }
 
 }
