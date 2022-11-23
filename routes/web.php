@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,31 +18,36 @@ use App\Http\Controllers\ProfileController;
 */
 
 // -----Admin-----
-//Login
+//Login & Logout
 Route::get('admin/login', [AdminController::class, 'login']);
 Route::post('admin/login', [AdminController::class, 'check_login']);
-
-//Logout
 Route::get('admin/logout', [AdminController::class, 'logout']);
-
-//Dashboard
+//Dashboard & Table & Transaction History & Profile & Wallet
 Route::get('admin/dashboard', function(){return view('admin/dashboard');});
-//Table
 Route::get('admin/table', function(){return view('admin/table');});
-//Transaction History
 Route::get('admin/transactionHistory', [AdminController::class, 'showHistory']);
+Route::get('admin/profile', [AdminController::class, 'showProfile']);
+Route::get('admin/wallet', [AdminController::class, 'showWallet']);
+
+//Deposit (Testing)
+Route::post('check-out/deposit', [AdminController::class, 'deposit']);
+
+//Withdraw (Testing)
+Route::post('check-out/withdraw', [AdminController::class, 'withdraw']);
+
+// -----Auth-----
+//Login & Logout
+Route::get('login', [AuthController::class, 'index']);
+Route::post('post-login', [AuthController::class, 'postLogin']);
+Route::get('logout', [AuthController::class, 'logout']);
+//Register  
+Route::post('post-registration', [AuthController::class, 'postRegistration']);
 
 // -----Branch-----
 
 
 // -----Manager-----
-//Deposit
-Route::get('deposit', [HomeController::class, 'depositForm']);
-Route::post('check-out/deposit', [HomeController::class, 'deposit']);
 
-//Withdraw
-Route::get('withdraw', [HomeController::class, 'withdrawForm']);
-Route::post('check-out/withdraw', [HomeController::class, 'withdraw']);
 
 // -----Member-----
 //Transfer
@@ -55,6 +61,8 @@ Route::get('/', function () {return view('welcome');});
 //View
 Route::get('profile/{id}', [ProfileController::class, 'view']);
 
+//Testing page
+Route::get('admin/test', function(){return view('admin/test');});
 
 Auth::routes();
 

@@ -24,35 +24,40 @@
                     </div>
                     <div class="ml-auto">
                         <select class="custom-select b-0">
-                            <option value="1">Withdraw</option>
-                            <option value="2" selected="">Deposit</option>
+                            <option value="1" selected>All</option>
+                            <option value="2">Withdraw</option>
+                            <option value="3">Deposit</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table">
-                    <thead>
+                <table class="table table-hover">
+                    <thead class="thead-dark">
                         <tr>
                             <th>#</th>
+                            <th>UUID</th>
                             <th>User Name</th>
                             <th>Type</th>
-                            <th>Price (RM)</th>
-                            <th>Total Amount</th>
+                            <th>Currency</th>
+                            <th>Pay/Receive</th>
+                            <th>Created Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($users as $user)
                             <tr>
                                 <td>{{$loop -> iteration}}</td>
+                                <td>{{$user -> uuid }}</td>
                                 <td>{{$user -> holderName}}</td>
-                                <td>{{$user -> tType}}</td>
-                                @if($user -> tAmount < 0 )
-                                    <td><span class="text-danger">{{$user -> tAmount}}</span></td>
-                                @elseif($user -> tAmount > 0 )
-                                    <td><span class="text-success">{{$user -> tAmount}}</span></td>
+                                <td>{{$user -> type}}</td>
+                                <td>MYR (RM)</td>
+                                @if($user -> amount < 0 )
+                                    <td><span class="text-danger">{{$user -> amount}}</span></td>
+                                @elseif($user -> amount > 0 )
+                                    <td><span class="text-success">+{{$user -> amount}}</span></td>
                                 @endif
-                                <td><span class="text-info">{{$user -> balance}}</span></td>
+                                <td>{{$user -> created_at}}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -64,53 +64,11 @@ class HomeController extends Controller
         return view('home', compact('wallet','walletHistory','user'));
     }
 
-    public function depositForm(){
-        return view('deposit');
-    }
-
-    public function withdrawForm(){
-        return view('withdraw');
-    }
-
     public function transferForm(Request $request, $id){
         
         $users = DB::table('users')->where('users.id',$id)->get();
 
         return view('transfer', compact('users'));
-    }
-
-    public function deposit(Request $request){
-        $user = User::where('id',Auth::id())->first();
-        if($user-> hasWallet('default')){
-            $wallet = $user->wallet;
-        }
-        elseif($user-> hasWallet('my-wallet')){
-            $wallet = $user->getWallet('my-wallet');
-        }
-        else{
-            Session::flash('msg','You dint have any wallet please create one');
-            return redirect('home');
-        }
-        $wallet -> deposit($request -> amount);
-
-        return redirect('home');
-    }
-    
-    public function withdraw(Request $request){
-        $user = User::where('id',Auth::id())->first();
-        if($user-> hasWallet('default')){
-            $wallet = $user->wallet;
-        }
-        elseif($user-> hasWallet('my-wallet')){
-            $wallet = $user->getWallet('my-wallet');
-        }
-        else{
-            Session::flash('msg','You dint have any wallet please create one');
-            return redirect('home');
-        }
-        $wallet -> withdraw($request -> amount);
-
-        return redirect('home');
     }
 
     public function transfer(Request $request){

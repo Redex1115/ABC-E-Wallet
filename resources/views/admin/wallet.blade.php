@@ -1,0 +1,136 @@
+@extends('layouts.admin')
+@section('content')
+
+<!-- Title -->
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Wallet Overview</h4>
+    </div>
+    <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                <li class="breadcrumb-item active">Wallet Overview</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div>
+                        <h4 class="card-title">Wallet Overview</h4>
+                    </div>
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#depositModal">Deposit</button>
+                        <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Balance</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($wallets as $wallet)
+                            <tr>
+                                <td>{{$loop->iteration}}</td>
+                                <td>{{$wallet->uName}}</td>
+                                <td><span class="text-info">{{$wallet->balance}}</span></td>
+                                <td><a href="" class="btn btn-rounded btn-outline-info">Check History</a></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deposit Modal -->
+<form action="{{ url('check-out/deposit') }}" method="POST">
+    @csrf
+    <div class="modal fade" id="depositModal" tabindex="-1" role="dialog" aria-labelledby="depositModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center">Deposit Form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Select User: </label>
+                            <select name="userID" id="userID" class="form-control form-control-line">
+                                @foreach($users as $user)
+                                    <option value="{{$user -> id}}">{{$user -> loginID}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Deposit Amount</label>
+                            <input type="text" name="amount" id="amount" class="form-control form-control-line"> 
+                        </div>
+                    </div>  
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Withdraw Modal -->
+<form action="{{ url('check-out/withdraw') }}" method="POST">
+    @csrf
+    <div class="modal fade" id="withdrawModal" tabindex="-1" role="dialog" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center">Withdraw Form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Select User: </label>
+                            <select name="userID" id="userID" class="form-control form-control-line">
+                                @foreach($users as $user)
+                                    <option value="{{$user -> id}}">{{$user -> loginID}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Withdraw Amount</label>
+                            <input type="text" name="amount" id="amount" class="form-control form-control-line"> 
+                        </div>
+                    </div>  
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@endsection

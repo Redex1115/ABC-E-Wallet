@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('created_by');
             $table->string('deleted_by')->nullable();
             $table->rememberToken();
+            $table->timestamps();
         });
     }
 
