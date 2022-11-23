@@ -23,19 +23,19 @@ class AdminController extends Controller
     public function check_login(Request $request){
 
         $request->validate([
-            'name' => 'required',
+            'loginID' => 'required',
             'password' => 'required',
         ]);
 
-        $admin = Admin::where(['name' => $request->name, 'password' => sha1($request->password)])->count();
+        $admin = User::where(['loginID' => $request->loginID, 'password' => sha1($request->password)])->count();
 
         if($request->has('rememberme')){
-            Cookie::queue('name',$request->name,1440); //1440 means it stays for 24 hours
+            Cookie::queue('loginID',$request->loginID,1440); //1440 means it stays for 24 hours
             Cookie::queue('password',$request->password,1440);
         }
 
         if($admin > 0){
-            $adminData = Admin::where(['name' => $request->name, 'password' => sha1($request->password)])->get();
+            $adminData = User::where(['loginID' => $request->loginID, 'password' => sha1($request->password)])->get();
             session(['adminData' => $adminData]);
             Toastr::success('You Successfully LogIn', 'Admin Login', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return redirect('admin/dashboard');
@@ -55,17 +55,13 @@ class AdminController extends Controller
 
     //Show History
     public function showHistory(){
-        $users = DB::table('wallets')
-        ->leftjoin('users','wallets.holder_id','=','users.id')
-        ->leftjoin('transactions','wallets.id','=','transactions.wallet_id')
-        ->select('wallets.*','users.name as holderName', 'transactions.type as tType', 'transactions.amount as tAmount')
-        ->orderBy('wallets.holder_id', 'asc')
-        ->orderBy('transactions.type','asc')
+        $users = DB::table('transactions')
+        ->leftjoin('users','transactions.payable_id','=','users.id')
+        ->select('transactions.*','users.loginID as holderName')
         ->get();
 
-        $counts = $users -> count();
 
-        return view('admin/transactionHistory', compact('users','counts'));
+        return view('admin/transactionHistory', compact('users'));
     }
 
     //Show Profile
@@ -75,10 +71,24 @@ class AdminController extends Controller
 
     //Show Wallet
     public function showWallet(){
-        $wallets = DB::table('wallets')->get();
         $users = User::all();
+        foreach($users as $user){
+            if($user -> hasWallet('my-wallet')){
+                $wallet = $user -> getWallet('my-wallet');
+            }
+            else{
+                $wallet = $user->createWallet([
+                    'name' => 'New Wallet',
+                    'slug' => 'my-wallet',
+                ]);
+            } 
+        }
 
-        return view('admin/wallet', compact('wallets', 'users'));
+        $wallets = DB::table('wallets')
+        ->leftjoin('users','wallets.holder_id','=','users.id')
+        ->select('wallets.*','users.loginID as uName')
+        ->get();
+        return view('admin/wallet', compact('users','wallets'));
     }
 
     //Deposit
@@ -94,10 +104,17 @@ class AdminController extends Controller
             Toastr::info('You do not have any wallet', 'Missing Wallet', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return redirect('home');
         }
-        $wallet -> deposit($request -> amount);
 
-        Toastr::success('Wallet Deposit RM'.$request -> amount.' Successfully', 'Deposit To '.$user -> name, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-        return redirect('admin/wallet');
+        if($request -> amount > $user -> credit_limit){
+            $remaining = $user -> credit_limit - $wallet -> balance;
+            Toastr::info('Your credit limit is RM'.$user -> credit_limit.'</br>You can deposit RM'.$remaining.' more','Over Limit', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+            return redirect('admin/wallet');
+        }
+        else{
+            $wallet -> deposit($request -> amount);
+            Toastr::success('Wallet Deposit RM'.$request -> amount.' Successfully', 'Deposit To '.$user -> loginID, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+            return redirect('admin/wallet');
+        }
     }
 
     //Withdraw
@@ -121,7 +138,9 @@ class AdminController extends Controller
         }
 
         $wallet -> withdraw($request -> amount);
-        Toastr::success('Wallet Withdraw RM'.$request -> amount.' Successfully', 'Withdraw From '.$user -> name, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+        Toastr::success('Wallet Withdraw RM'.$request -> amount.' Successfully', 'Withdraw From '.$user -> loginID, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
         return redirect('admin/wallet');
     }
+
+
 }

@@ -53,7 +53,7 @@
 </style>
     </head>
     <body>        
-
+    @include('functionPage.toastr')
         <div class="container">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
@@ -67,7 +67,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <input type="text" class="form-control" name="name" id="name" aria-describedby="emailHelp" placeholder="User Name"  @if(Cookie::has('name')) value="{{Cookie::get('name')}}" @endif>
+                            <input type="text" class="form-control" name="loginID" id="loginID" aria-describedby="emailHelp" placeholder="User Name"  @if(Cookie::has('loginID')) value="{{Cookie::get('loginID')}}" @endif>
                         </div>
 
                         <div class="mb-3">
@@ -75,22 +75,13 @@
                         </div>
 
                         <div class="rememberme">
-                            <input type="checkbox" name="rememberme" id="rememberme" @if(Cookie::has('name')) checked @endif><span>Remember Me</span>
+                            <input type="checkbox" name="rememberme" id="rememberme" @if(Cookie::has('loginID')) checked @endif><span>Remember Me</span>
                         </div>
 
                         <div class="text-center">
                             <button type="submit" class="btn btn-color px-5 mb-5 w-100">Login</button>
                         </div>
 
-                        @if($errors->any())
-                            @foreach($errors->all() as $error)
-                                <p class="text-danger">{{$error}}</p>
-                            @endforeach
-                        @endif
-
-                        @if(Session::has('msg'))
-                            <p class="text-danger">{{Session('msg')}}</p>
-                        @endif
                     </form>
                     </div>
                 </div>
