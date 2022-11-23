@@ -10,14 +10,17 @@ use Laravel\Sanctum\HasApiTokens;
 use Bavix\Wallet\Traits\HasWallets;
 use Bavix\Wallet\Traits\CanPay;
 use Bavix\Wallet\Interfaces\Customer;
+use Bavix\Wallet\Traits\HasWallet;
+use Bavix\Wallet\Interfaces\Wallet;
 
-class User extends Authenticatable implements Customer
+class User extends Authenticatable implements Wallet
 {
-    use HasApiTokens, HasFactory, Notifiable, CanPay, HasWallets;
+    use HasApiTokens, HasFactory, Notifiable, HasWallet, HasWallets;
 
-    const MEMBER = 1;
-    const AGENT = 2;
-    const BRANCH = 3;
+    const MEMBER = 4;
+    const AGENT = 3;
+    const BRANCH = 2;
+    const ADMIN = 1;
 
     const TABLE = 'users';
 
@@ -60,25 +63,30 @@ class User extends Authenticatable implements Customer
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function accountLevel()
+    
+    public function accLevel()
     {
-        return (int) $this->accountLevel;
+        return (int) $this->account_level;
     }
 
-    public function isBranch(): bool
+    public function isAdmin(): bool
     {
-        return $this->accountLevel() === self::BRANCH;
+        return $this->accLevel() === self::ADMIN;
     }
 
     public function isAgent(): bool
     {
-        return $this->accountLevel() === self::AGENT;
+        return $this->accLevel() === self::AGENT;
     }
-    
+
     public function isMember(): bool
     {
-        return $this->accountLevel() === self::MEMBER;
+        return $this->accLevel() === self::MEMBER;
+    }
+
+    public function isBranch(): bool
+    {
+        return $this->accLevel() === self::BRANCH;
     }
 
 }
