@@ -20,7 +20,7 @@ class CreateWalletsTable extends Migration
             $table->uuid('uuid')->unique();
             $table->string('description')->nullable();
             $table->json('meta')->nullable();
-            $table->decimal('balance', 64, 2)->default(0);
+            $table->decimal('balance', 64, 0)->default(0);
             $table->unsignedSmallInteger('decimal_places')->default(2);
             $table->timestamps();
 

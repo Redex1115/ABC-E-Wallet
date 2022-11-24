@@ -163,7 +163,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="created-by">Created By</label>
-                                <input type="text" name="created_by" class="form-control form-control-line" readonly @if(Session::has('adminData')) value="admin" @endif>
+                                <input type="text" name="created_by" class="form-control form-control-line" readonly @if(Session::has('adminData')) value="1" @endif>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -175,9 +175,16 @@
                         <div class="col-md-3">
                             <label for="accountLevel">Role</label>
                             <select name="accountLevel" id="accountLevel" class="form-control form-control-line">
-                                <option value="4" selected="">Member</option>
-                                <option value="3">Agent</option>
-                                <option value="2">Branch</option>
+                                @if(auth()->user()->isAdmin())
+                                    <option value="10">Sub Account</option>
+                                    <option value="2">Branch</option>
+                                @elseif(auth()->user()->isBranch())
+                                    <option value="10">Sub Account</option>
+                                    <option value="3">Agent</option>
+                                @elseif(auth()->user()->isAgent())
+                                    <option value="10">Sub Account</option>
+                                    <option value="4" selected="">Member</option>
+                                @endif
                             </select>
                         </div>
                     </div>

@@ -53,9 +53,9 @@
                                 <td>{{$user -> type}}</td>
                                 <td>MYR (RM)</td>
                                 @if($user -> amount < 0 )
-                                    <td><span class="text-danger">{{$user -> amount}}</span></td>
+                                    <td><span class="text-danger">{{number_format($user -> amount /100 ,2)}}</span></td>
                                 @elseif($user -> amount > 0 )
-                                    <td><span class="text-success">+{{$user -> amount}}</span></td>
+                                    <td><span class="text-success">+{{number_format($user -> amount /100 ,2)}}</span></td>
                                 @endif
                                 <td>{{$user -> created_at}}</td>
                             </tr>

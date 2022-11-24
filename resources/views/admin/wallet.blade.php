@@ -46,8 +46,8 @@
                             <tr>
                                 <td>{{$loop->iteration}}</td>
                                 <td>{{$wallet->uName}}</td>
-                                <td><span class="text-info">{{$wallet->balance}}</span></td>
-                                <td><a href="" class="btn btn-rounded btn-outline-info">Check History</a></td>
+                                <td><span class="text-info">{{number_format($wallet->balance/100,2 )}}</span></td>
+                                <td><a href="" class="btn btn-rounded btn-outline-info">History</a></td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -83,7 +83,7 @@
                     <div class="form-group">
                         <div class="col-md-12">
                             <label>Deposit Amount</label>
-                            <input type="text" name="amount" id="amount" class="form-control form-control-line"> 
+                            <input type="number" name="amount" id="amount" step="0.01" min="0" class="form-control form-control-line"> 
                         </div>
                     </div>  
                 </div>
@@ -121,7 +121,7 @@
                     <div class="form-group">
                         <div class="col-md-12">
                             <label>Withdraw Amount</label>
-                            <input type="text" name="amount" id="amount" class="form-control form-control-line"> 
+                            <input type="number" name="amount" id="amount" step="0.01" min="0" class="form-control form-control-line"> 
                         </div>
                     </div>  
                 </div>

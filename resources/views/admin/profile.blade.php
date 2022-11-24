@@ -39,7 +39,7 @@
         <div class="card">
             <div class="card-body">
                 <center class="m-t-30">
-                    {{QrCode::generate('Make aaaa')}}
+                    {{QrCode::generate('aaa')}}
                     <i class="bi bi-arrow-down-right-circle-fill"></i>
                     <h4 class="card-title m-t-10">Your User QrCode</h4>
                 </center>

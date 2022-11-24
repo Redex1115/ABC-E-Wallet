@@ -59,10 +59,10 @@ Route::post('check-out/transfer', [HomeController::class, 'transfer']);
 Route::get('/', function () {return view('welcome');});
 
 //View
-Route::get('profile/{id}', [ProfileController::class, 'view']);
+Route::get('profile', [ProfileController::class, 'view']);
 
 //Testing page
-Route::get('admin/test', function(){return view('admin/test');});
+Route::get('admin/test', [AdminController::class, 'showTest']);
 
 Auth::routes();
 

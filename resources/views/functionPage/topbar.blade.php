@@ -24,7 +24,7 @@
             <ul class="navbar-nav my-lg-0">
                 <!-- User profile -->
                 <li class="nav-item">
-                    <a class="nav-link text-muted waves-effect waves-dark" href="{{url('admin/profile')}}" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" style="color: green;"></i></a>
+                    <a class="nav-link text-muted waves-effect waves-dark" href="{{ url('admin/profile')}} aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" style="color: green;"></i></a>
                 </li>
             </ul>
         </div>
