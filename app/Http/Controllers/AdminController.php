@@ -23,25 +23,29 @@ class AdminController extends Controller
     public function check_login(Request $request){
 
         $request->validate([
-            'loginID' => 'required',
             'password' => 'required',
+            'loginID' => 'required',
         ]);
-
-        $admin = User::where(['loginID' => $request->loginID, 'password' => sha1($request->password)])->count();
 
         if($request->has('rememberme')){
             Cookie::queue('loginID',$request->loginID,1440); //1440 means it stays for 24 hours
             Cookie::queue('password',$request->password,1440);
         }
 
-        if($admin > 0){
-            $adminData = User::where(['loginID' => $request->loginID, 'password' => sha1($request->password)])->get();
-            session(['adminData' => $adminData]);
-            Toastr::success('You Successfully LogIn', 'Admin Login', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('admin/dashboard');
+        $adminData = User::where(['loginID' => $request->loginID, 'password' => sha1($request->password)])->get();
+        session(['adminData' => $adminData]);
+
+        $credentials = $request->only('password','loginID');
+
+        if(Auth::attempt($credentials))
+        {
+            if(Auth::user()->isAdmin()){
+                Toastr::success('You Successfully LogIn', 'Admin Login', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+                return redirect('admin/dashboard');
+            }
         }
         else{
-            Toastr::error('Invalid name/password!!', 'Wrong Info', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-bottom-right"]);
+            Toastr::error('Wrong User Name and Password', 'Invalid Input', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return redirect('admin/login');
         }
     }
@@ -74,6 +78,7 @@ class AdminController extends Controller
         $users = User::all();
         foreach($users as $user){
             if($user -> hasWallet('my-wallet')){
+                
                 $wallet = $user -> getWallet('my-wallet');
             }
             else{
@@ -81,8 +86,9 @@ class AdminController extends Controller
                     'name' => 'New Wallet',
                     'slug' => 'my-wallet',
                 ]);
-            } 
+            }
         }
+        
 
         $wallets = DB::table('wallets')
         ->leftjoin('users','wallets.holder_id','=','users.id')
@@ -111,7 +117,7 @@ class AdminController extends Controller
             return redirect('admin/wallet');
         }
         else{
-            $wallet -> deposit($request -> amount);
+            $wallet -> depositFloat($request -> amount);
             Toastr::success('Wallet Deposit RM'.$request -> amount.' Successfully', 'Deposit To '.$user -> loginID, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return redirect('admin/wallet');
         }
@@ -137,10 +143,15 @@ class AdminController extends Controller
             return redirect('admin/wallet');
         }
 
-        $wallet -> withdraw($request -> amount);
+        $wallet -> withdrawFloat($request -> amount);
         Toastr::success('Wallet Withdraw RM'.$request -> amount.' Successfully', 'Withdraw From '.$user -> loginID, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
         return redirect('admin/wallet');
     }
 
+    //Show Test Blade
+    public function showTest(){
+        $parents = User::where('created_by',0)->get();
+        return view('admin/test', compact('parents'));
+    }
 
 }
