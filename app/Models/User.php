@@ -90,4 +90,9 @@ class User extends Authenticatable implements Wallet
         return $this->accLevel() === self::BRANCH;
     }
 
+    public function subparent(){
+
+        return $this->hasMany('App\Models\User', 'created_by');
+
+    }
 }

@@ -19,10 +19,10 @@ class UserTableSeeder extends Seeder
         User::factory()->create([
             'loginID'      => 'Admin',
             'email'     => 'admin@example.com',
-            'password'  => sha1('password'),
+            'password'  => bcrypt('password'),
             'accountLevel' => '1',
             'account_id' => '000000000000',
-            'created_by'=> 'Auto',
+            'created_by'=> '0',
             'join_date' => Carbon::today(),
             'credit_limit' => 9999999,
         ]);
