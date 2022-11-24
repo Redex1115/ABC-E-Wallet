@@ -12,10 +12,11 @@ use Bavix\Wallet\Traits\CanPay;
 use Bavix\Wallet\Interfaces\Customer;
 use Bavix\Wallet\Traits\HasWallet;
 use Bavix\Wallet\Interfaces\Wallet;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements Wallet
 {
-    use HasApiTokens, HasFactory, Notifiable, HasWallet, HasWallets;
+    use HasApiTokens, HasFactory, Notifiable, HasWallet, HasWallets, HasRoles;
 
     const MEMBER = 4;
     const AGENT = 3;
@@ -66,7 +67,7 @@ class User extends Authenticatable implements Wallet
     
     public function accLevel()
     {
-        return (int) $this->account_level;
+        return (int) $this->accountLevel;
     }
 
     public function isAdmin(): bool
