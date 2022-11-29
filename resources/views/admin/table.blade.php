@@ -75,7 +75,7 @@
                     <div class="tree-view">
                         @foreach($parents as $parent)
                             <ul id="myUl">
-                                <li><span class="caret"><a href="{{ url('admin/table',['id' => $parent->id])}}">{{$parent->loginID}}</a></span></span>
+                                <li><span class="caret"><a href="{{ url('admin/table',['id' => $parent->account_id])}}">{{$parent->loginID}}</a></span></span>
                                     <ul class="nested" id="opened">
                                         <li>
                                             @if(count($parent->subparent))
@@ -95,7 +95,6 @@
                             @foreach($users as $user)
                                 <form action="{{ url('admin/update')}}" method="POST">
                                     @csrf
-                                    <input type="hidden" name="userID" value="{{$user->id}}">
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
                                             <label for="accID">Account ID</label>
@@ -154,7 +153,9 @@
                                         <div class="ml-auto">
                                             @if($user -> created_by == Auth::user()->id)
                                                 <button type="submit" class="btn btn-rounded btn-outline-success">Update</button>
-                                            @endif
+                                            @endif    
+                                            <!-- For Testing -->
+                                                <button type="submit" class="btn btn-rounded btn-outline-success">Update</button>
                                         </div>
                                     </div>
                                 </form>

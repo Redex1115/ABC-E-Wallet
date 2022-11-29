@@ -1,8 +1,8 @@
 @foreach($subparents as $subparent)
         @if(!count($subparent->subparent))
-        <li><a href="{{ url('admin/table',['id' => $subparent->id])}}" >{{$subparent->loginID}}</a></li>
+        <li><a href="{{ url('admin/table',['id' => $subparent->account_id])}}" >{{$subparent->loginID}}</a></li>
         @elseif(count($subparent->subparent))
-        <li><span class="caret"><a href="{{ url('admin/table',['id' => $subparent->id])}}" >{{$subparent->loginID}}</a></span>
+        <li><span class="caret"><a href="{{ url('admin/table',['id' => $subparent->account_id])}}" >{{$subparent->loginID}}</a></span>
         @endif
             <ul class="nested">
                 <li>

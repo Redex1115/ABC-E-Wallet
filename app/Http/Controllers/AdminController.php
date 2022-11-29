@@ -94,7 +94,7 @@ class AdminController extends Controller
 
     //Update info
     public function update(Request $request){
-        $info = Info::where('userID', $request->userID)->first();
+        $info = Info::where('userID', $request->accID)->first();
 
         $request -> validate([
             'accID' => 'required',
@@ -107,7 +107,7 @@ class AdminController extends Controller
 
         if(!$info){
             $addInfo = Info::create([
-                'userID' => $request -> userID,
+                'userID' => $request -> accID,
                 'ic' => $request -> ic,
                 'handphone_number' => $request -> phoneNO,
                 'address' => $request -> address,
