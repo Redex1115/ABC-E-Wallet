@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Brian2694\Toastr\Facades\Toastr;
+use App\Models\Info;
 use App\Models\Admin;
 use App\Models\User;
 use DB;
@@ -71,6 +72,60 @@ class AdminController extends Controller
     //Show Profile
     public function showProfile(){
         return view('admin/profile');
+    }
+
+    //Show Table
+    public function showTable($id){
+        $parents = User::where('created_by',0)->get();
+        $users = DB::table('users')
+        ->leftjoin('infos','users.id','=','infos.userID')
+        ->select('users.*','infos.ic as userIc','infos.handphone_number as userHp','infos.address as userAddress','infos.remark as userRemark','infos.status as userStatus')
+        ->where('users.id',$id)
+        ->get();
+
+        return view('admin/table', compact('parents','users'));
+    }
+
+    //Display Info
+    public function info($id){
+        $user = User::where('account_id',$id)->first();
+        return view('admin/table', compact('user'));
+    }
+
+    //Update info
+    public function update(Request $request){
+        $info = Info::where('userID', $request->userID)->first();
+
+        $request -> validate([
+            'accID' => 'required',
+            'ic' => 'nullable',
+            'phoneNO' => 'nullable',
+            'address' => 'nullable',
+            'remark' => 'nullable',
+            'status' => 'nullable',
+        ]);
+
+        if(!$info){
+            $addInfo = Info::create([
+                'userID' => $request -> userID,
+                'ic' => $request -> ic,
+                'handphone_number' => $request -> phoneNO,
+                'address' => $request -> address,
+                'remark' => $request -> remark,
+                'status' => $request -> status,
+            ]);
+        }
+        else{
+            $info -> ic = $request -> ic;
+            $info -> handphone_number = $request -> phoneNO;
+            $info -> address = $request -> address;
+            $info -> remark = $request -> remark;
+            $info -> status = $request -> status;
+            $info -> save();  
+        }
+        
+        Toastr::success('You have successfully update user info', 'Update Info', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+        return back();
     }
 
     //Show Wallet
@@ -150,8 +205,7 @@ class AdminController extends Controller
 
     //Show Test Blade
     public function showTest(){
-        $parents = User::where('created_by',0)->get();
-        return view('admin/test', compact('parents'));
+        $users = DB::table('users')->where('id','!=', Auth::user()->id)->get();
+        return view('admin/test', compact('users'));
     }
-
 }

@@ -19,15 +19,19 @@ use App\Http\Controllers\Auth\AuthController;
 
 // -----Admin-----
 //Login & Logout
-Route::get('admin/login', [AdminController::class, 'login']);
+Route::get('admin/login', [AdminController::class, 'login'])->name('admin.login');
 Route::post('admin/login', [AdminController::class, 'check_login']);
 Route::get('admin/logout', [AdminController::class, 'logout']);
 //Dashboard & Table & Transaction History & Profile & Wallet
 Route::get('admin/dashboard', function(){return view('admin/dashboard');});
-Route::get('admin/table', function(){return view('admin/table');});
+
 Route::get('admin/transactionHistory', [AdminController::class, 'showHistory']);
 Route::get('admin/profile', [AdminController::class, 'showProfile']);
 Route::get('admin/wallet', [AdminController::class, 'showWallet']);
+
+//Display Info & Update
+Route::get('admin/table/{id}', [AdminController::class, 'showTable']);
+Route::post('admin/update', [AdminController::class, 'update']);
 
 //Deposit (Testing)
 Route::post('check-out/deposit', [AdminController::class, 'deposit']);

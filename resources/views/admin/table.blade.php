@@ -1,16 +1,56 @@
 @extends('layouts.admin')
 @section('content')
 
+<style>
+    ul, #myUL {
+        list-style-type: none;
+    }
+
+    #myUL {
+        margin: 0;
+        padding: 0;
+    }
+
+    .caret {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .caret::before {
+        content: "\25B6";
+        color: black;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    .caret-down::before {
+        transform: rotate(90deg);
+    }
+
+    .nested {
+        display: none;
+    }
+
+    #opened{
+        display: block !important;
+    }
+
+    .active {
+        display: block;
+    }
+
+</style>
+
 <!-- Title -->
 <div class="row page-titles">
     <div class="col-md-5 align-self-center">
-        <h4 class="text-themecolor">Table</h4>
+        <h4 class="text-themecolor">Member Entry</h4>
     </div>
     <div class="col-md-7 align-self-center text-right">
         <div class="d-flex justify-content-end align-items-center">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                <li class="breadcrumb-item active">Table</li>
+                <li class="breadcrumb-item active">Member Entry</li>
             </ol>
         </div>
     </div>
@@ -31,78 +71,117 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="tree-view">
-
+                        @foreach($parents as $parent)
+                            <ul id="myUl">
+                                <li><span class="caret"><a href="{{ url('admin/table',['id' => $parent->id])}}">{{$parent->loginID}}</a></span></span>
+                                    <ul class="nested" id="opened">
+                                        <li>
+                                            @if(count($parent->subparent))
+                                                @include('admin.subParent',['subparents' => $parent->subparent])
+                                            @endif
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        @endforeach
                     </div>
                 </div>
-                <div class="col-md-8">
-                    <div class="info">
-
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="page-permission table-responsive">
-                        <div class="d-flex align-items-center justify-content-end" style="margin: 0 25px 10px 0;">
-                            All &nbsp; <input type="checkbox" id="select-all">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="text-success">User Info</h3>
+                            @foreach($users as $user)
+                                <form action="{{ url('admin/update')}}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="userID" value="{{$user->id}}">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="accID">Account ID</label>
+                                            <input type="text" name="accID" id="accID" class="form-control form-control-outline" value="{{$user -> account_id}}" placeholder="Account ID" readonly>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="ic">IC No</label>
+                                            <input type="text" name="ic" id="ic" class="form-control form-control-outline" value="{{$user -> userIc}}" placeholder="IC No">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="phoneNO">Phone No</label>
+                                            <input type="text" name="phoneNO" id="phoneNO" class="form-control form-control-outline" value="{{$user -> userHp}}" placeholder="Phone No">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="userName">User Name</label>
+                                            <input type="text" class="form-control form-control-outline" value="{{$user -> loginID}}" placeholder="User Name" readonly>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="email">Email Address</label>
+                                            <input type="email" class="form-control form-control-outline" value="{{$user -> email}}" placeholder="Email" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label for="address">Address</label>
+                                            <input type="text" name="address" id="address" class="form-control form-control-outline" value="{{$user -> userAddress}}" placeholder="Address">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="">Credit Limit</label>
+                                            <input type="text" class="form-control form-control-outline" value="{{$user -> credit_limit}}" placeholder="00000" readonly>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="joinDate">Join Date</label>
+                                            <input type="text" class="form-control form-control-outline" value="{{$user -> join_date}}" placeholder="1111-11-11" readonly>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="status">Status</label>
+                                            <input type="text" name="status" id="status" class="form-control form-control-outline" value="{{$user -> userStatus}}" placeholder="Good">
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="created_by">Created By</label>
+                                            <input type="text" class="form-control form-control-outline" value="{{$user -> created_by}}" placeholder="Admin" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label for="remark">Remark</label>
+                                            <textarea name="remark" id="remark" class="form-control" row="1" value="" placeholder="{{$user -> userRemark}}"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="ml-auto">
+                                            @if($user -> created_by == Auth::user()->id)
+                                                <button type="submit" class="btn btn-rounded btn-outline-success">Update</button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </form>
+                            @endforeach
                         </div>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">&nbsp;</th>
-                                    <th>Admin</th>
-                                    <th>Branch</th>
-                                    <th>Agent</th>
-                                    <th>Member</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th class="text-center">Register</th>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">Edit</th>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">Delete</th>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">Deposit</th>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">Withdraw</th>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">Transfer</th>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="page-permission table-responsive">
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th class="text-center">Deposit</th>
+                                            <th class="text-center">Withdraw</th>
+                                            <th class="text-center">Transfer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center"><input type="checkbox"></td>
+                                            <td class="text-center"><input type="checkbox"></td>
+                                            <td class="text-center"><input type="checkbox"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,7 +198,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-center">Register Branch</h5>
+                    <h5 class="modal-title text-center">Register</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -163,7 +242,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="created-by">Created By</label>
-                                <input type="text" name="created_by" class="form-control form-control-line" readonly @if(Session::has('adminData')) value="1" @endif>
+                                <input type="text" name="created_by" class="form-control form-control-line" readonly value="{{Auth::user()->id}}">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -186,6 +265,24 @@
                                     <option value="4" selected="">Member</option>
                                 @endif
                             </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                <div class="row">
+                        <div class="col-md-12">
+                            <div class="page-permission table-responsive">
+                                <h3>Page Permission</h3>
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox">Deposit</td>
+                                            <td><input type="checkbox">Withdraw</td>
+                                            <td><input type="checkbox">Transfer</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -217,6 +314,19 @@
         }
         
     }); 
+</script>
+
+<script>
+    var toggler = document.getElementsByClassName("caret");
+    var i;
+
+    for (i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function() {
+            $(this).siblings("ul").slideToggle("slow");
+            this.classList.toggle("caret-down");
+        });
+    }
+
 </script>
 
 @endsection
