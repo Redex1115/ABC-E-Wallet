@@ -80,7 +80,7 @@ class AdminController extends Controller
         $users = DB::table('users')
         ->leftjoin('infos','users.id','=','infos.userID')
         ->select('users.*','infos.ic as userIc','infos.handphone_number as userHp','infos.address as userAddress','infos.remark as userRemark','infos.status as userStatus')
-        ->where('users.id',$id)
+        ->where('users.account_id',$id)
         ->get();
 
         return view('admin/table', compact('parents','users'));
