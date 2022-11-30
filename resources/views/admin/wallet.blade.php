@@ -26,27 +26,33 @@
                         <h4 class="card-title">Wallet Overview</h4>
                     </div>
                     <div class="ml-auto">
-                    @foreach($user_permissions as $user_permission)
-                        @if(Auth::user()->id == $user_permission -> user_id && $user_permission -> pName == "can_deposit")
-                            <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#depositModal">Deposit</button>
-                            @break
-                        @endif
-                        
-                    @endforeach
+                    @if(Auth::user()->isAdmin())
+                        <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#depositModal">Deposit</button>
+                        <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
+                        <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#transferModal">Transfer</button>
+                    @else
+                        @foreach($user_permissions as $user_permission)
+                            @if(Auth::user()->account_id == $user_permission -> user_id && $user_permission -> pName == "can_deposit")
+                                <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#depositModal">Deposit</button>
+                                @break
+                            @endif
+                            
+                        @endforeach
 
-                    @foreach($user_permissions as $user_permission)
-                        @if(Auth::user()->id == $user_permission -> user_id && $user_permission -> pName == "can_withdraw")
-                            <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
-                            @break
-                        @endif
-                    @endforeach
+                        @foreach($user_permissions as $user_permission)
+                            @if(Auth::user()->account_id == $user_permission -> user_id && $user_permission -> pName == "can_withdraw")
+                                <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
+                                @break
+                            @endif
+                        @endforeach
 
-                    @foreach($user_permissions as $user_permission)
-                        @if(Auth::user()->id == $user_permission -> user_id && $user_permission -> pName == "can_transfer")
-                            <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#transferModal">Transfer</button>
-                            @break
-                        @endif
-                    @endforeach
+                        @foreach($user_permissions as $user_permission)
+                            @if(Auth::user()->account_id == $user_permission -> user_id && $user_permission -> pName == "can_transfer")
+                                <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#transferModal">Transfer</button>
+                                @break
+                            @endif
+                        @endforeach
+                    @endif
                     </div>
                 </div>
             </div>
@@ -93,7 +99,7 @@
                         <div class="col-md-12">
                             <label>Select User: </label>
                             <select name="userID" id="userID" class="form-control form-control-line">
-                                @foreach($users as $user)
+                                @foreach($self as $user)
                                     <option value="{{$user -> id}}">{{$user -> loginID}}</option>
                                 @endforeach
                             </select>
@@ -131,7 +137,7 @@
                         <div class="col-md-12">
                             <label>Select User: </label>
                             <select name="userID" id="userID" class="form-control form-control-line">
-                                @foreach($users as $user)
+                                @foreach($self as $user)
                                     <option value="{{$user -> id}}">{{$user -> loginID}}</option>
                                 @endforeach
                             </select>
@@ -169,7 +175,7 @@
                         <div class="col-md-12">
                             <label>Select User: </label>
                             <select name="userID" id="userID" class="form-control form-control-line">
-                                @foreach($users as $user)
+                                @foreach($others as $user)
                                     <option value="{{$user -> id}}">{{$user -> loginID}}</option>
                                 @endforeach
                             </select>
