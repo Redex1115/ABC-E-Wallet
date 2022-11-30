@@ -19,8 +19,8 @@ use App\Http\Controllers\Auth\AuthController;
 
 // -----Admin-----
 //Login & Logout
-Route::get('admin/login', [AdminController::class, 'login'])->name('admin.login');
-Route::post('admin/login', [AdminController::class, 'check_login']);
+Route::get('admin/login', [AdminController::class, 'login']);
+Route::post('admin/login', [AdminController::class, 'check_login'])->name('admin.login');
 Route::get('admin/logout', [AdminController::class, 'logout']);
 //Dashboard & Table & Transaction History & Profile & Wallet
 Route::get('admin/dashboard', function(){return view('admin/dashboard');});
