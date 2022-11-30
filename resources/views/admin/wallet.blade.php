@@ -26,8 +26,27 @@
                         <h4 class="card-title">Wallet Overview</h4>
                     </div>
                     <div class="ml-auto">
-                        <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#depositModal">Deposit</button>
-                        <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
+                    @foreach($user_permissions as $user_permission)
+                        @if(Auth::user()->id == $user_permission -> user_id && $user_permission -> pName == "can_deposit")
+                            <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#depositModal">Deposit</button>
+                            @break
+                        @endif
+                        
+                    @endforeach
+
+                    @foreach($user_permissions as $user_permission)
+                        @if(Auth::user()->id == $user_permission -> user_id && $user_permission -> pName == "can_withdraw")
+                            <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
+                            @break
+                        @endif
+                    @endforeach
+
+                    @foreach($user_permissions as $user_permission)
+                        @if(Auth::user()->id == $user_permission -> user_id && $user_permission -> pName == "can_transfer")
+                            <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#transferModal">Transfer</button>
+                            @break
+                        @endif
+                    @endforeach
                     </div>
                 </div>
             </div>
@@ -121,6 +140,44 @@
                     <div class="form-group">
                         <div class="col-md-12">
                             <label>Withdraw Amount</label>
+                            <input type="number" name="amount" id="amount" step="0.01" min="0" class="form-control form-control-line"> 
+                        </div>
+                    </div>  
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Transfer Modal -->
+<form action="{{ url('check-out/transfer') }}" method="POST">
+    @csrf
+    <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="transferModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center">Transfer Form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Select User: </label>
+                            <select name="userID" id="userID" class="form-control form-control-line">
+                                @foreach($users as $user)
+                                    <option value="{{$user -> id}}">{{$user -> loginID}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Transfer Amount</label>
                             <input type="number" name="amount" id="amount" step="0.01" min="0" class="form-control form-control-line"> 
                         </div>
                     </div>  
