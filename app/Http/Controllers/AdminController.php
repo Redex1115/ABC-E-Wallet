@@ -130,26 +130,20 @@ class AdminController extends Controller
 
     //Show Wallet
     public function showWallet(){
-        $users = User::all();
-        foreach($users as $user){
-            if($user -> hasWallet('my-wallet')){
-                
-                $wallet = $user -> getWallet('my-wallet');
-            }
-            else{
-                $wallet = $user->createWallet([
-                    'name' => 'New Wallet',
-                    'slug' => 'my-wallet',
-                ]);
-            }
-        }
-        
+        $users = User::where('account_id', '!=', Auth::user()->account_id)->get();
+
+        $user_permissions = DB::table('user_permissions')
+        ->leftjoin('permissions','user_permissions.permission_id','=','permissions.id')
+        ->select('user_permissions.*', 'permissions.permission_name as pName')
+        ->where('user_permissions.user_id',Auth::user()->id)
+        ->get(); 
 
         $wallets = DB::table('wallets')
         ->leftjoin('users','wallets.holder_id','=','users.id')
         ->select('wallets.*','users.loginID as uName')
         ->get();
-        return view('admin/wallet', compact('users','wallets'));
+
+        return view('admin/wallet', compact('users','wallets','user_permissions'));
     }
 
     //Deposit
@@ -203,9 +197,40 @@ class AdminController extends Controller
         return redirect('admin/wallet');
     }
 
+    //Transfer
+    public function transfer(Request $request){
+        $first = User::where('id',Auth::id())->first();
+        $last = User::where('id', $request -> userID)->first();
+        $first->getKey() !== $last->getKey();
+
+        if($first-> hasWallet('default')){
+            $walletFirst = $first->wallet;
+        }
+        elseif($first-> hasWallet('my-wallet')){
+            $walletFirst = $first->getWallet('my-wallet');
+        }
+
+        if($last-> hasWallet('default')){
+            $walletLast = $last->wallet;
+        }
+        elseif($last-> hasWallet('my-wallet')){
+            $walletLast = $last->getWallet('my-wallet');
+        }
+
+        $walletFirst -> transferFloat($walletLast, $request->amount);
+
+        return back();
+    }
+
     //Show Test Blade
     public function showTest(){
+        $user_permissions = DB::table('user_permissions')
+        ->leftjoin('permissions','user_permissions.permission_id','=','permissions.id')
+        ->select('user_permissions.*', 'permissions.permission_name as pName')
+        ->where('user_permissions.user_id',Auth::user()->id)
+        ->get();
+
         $users = DB::table('users')->where('id','!=', Auth::user()->id)->get();
-        return view('admin/test', compact('users'));
+        return view('admin/test', compact('users','user_permissions'));
     }
 }

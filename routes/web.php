@@ -39,6 +39,9 @@ Route::post('check-out/deposit', [AdminController::class, 'deposit']);
 //Withdraw (Testing)
 Route::post('check-out/withdraw', [AdminController::class, 'withdraw']);
 
+//Transfer (Testing)
+Route::post('check-out/transfer', [AdminController::class, 'transfer']);
+
 // -----Auth-----
 //Login & Logout
 Route::get('login', [AuthController::class, 'index']);
@@ -56,7 +59,7 @@ Route::post('post-registration', [AuthController::class, 'postRegistration']);
 // -----Member-----
 //Transfer
 Route::get('/transfer/{id}', [HomeController::class, 'transferForm']);
-Route::post('check-out/transfer', [HomeController::class, 'transfer']);
+
 
 // -----For All-----
 //Welcome Page
