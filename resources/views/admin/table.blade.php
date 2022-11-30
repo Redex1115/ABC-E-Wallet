@@ -63,7 +63,7 @@
             <div class="card-body">
                 <div class="d-flex">
                     <div>
-                        <h4 class="card-title">---Dont know should write what---</h4>
+                        <h4 class="card-title">User</h4>
                     </div>
                     <div class="ml-auto">
                         <button type="button" class="btn btn-rounded btn-outline-success" data-toggle="modal" data-target=".bd-example-modal-lg">Create</button>
@@ -88,7 +88,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-9" style="font-size: 14px;">
                     <div class="row">
                         <div class="col-md-12">
                             <h3 class="text-success">User Info</h3>
@@ -150,6 +150,20 @@
                                         </div>
                                     </div>
                                     <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label>Permission</label>
+                                            <div class="col-md-3">
+                                                <span><input type="checkbox">Deposit</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <span><input type="checkbox">Withdraw</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <span><input type="checkbox">Transfer</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
                                         <div class="ml-auto">
                                             @if($user -> created_by == Auth::user()->id)
                                                 <button type="submit" class="btn btn-rounded btn-outline-success">Update</button>
@@ -160,28 +174,6 @@
                                     </div>
                                 </form>
                             @endforeach
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="page-permission table-responsive">
-                                <table class="table">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th class="text-center">Deposit</th>
-                                            <th class="text-center">Withdraw</th>
-                                            <th class="text-center">Transfer</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-center"><input type="checkbox"></td>
-                                            <td class="text-center"><input type="checkbox"></td>
-                                            <td class="text-center"><input type="checkbox"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -273,13 +265,15 @@
                 <div class="row">
                         <div class="col-md-12">
                             <div class="page-permission table-responsive">
-                                <h3>Page Permission</h3>
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-center">Page Permission</h5>
+                                </div>
                                 <table class="table">
                                     <tbody>
                                         <tr>
-                                            <td><input type="checkbox">Deposit</td>
-                                            <td><input type="checkbox">Withdraw</td>
-                                            <td><input type="checkbox">Transfer</td>
+                                            <td><input type="checkbox" name="can_deposit">Deposit</td>
+                                            <td><input type="checkbox" name="can_withdraw">Withdraw</td>
+                                            <td><input type="checkbox" name="can_transfer">Transfer</td>
                                         </tr>
                                     </tbody>
                                 </table>
