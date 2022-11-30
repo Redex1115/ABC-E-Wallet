@@ -77,11 +77,6 @@
     }
   }
 
-  function viewTransfer($id){
-
-    return route('transfer');
-  }
-
   function onScanFailure(error) {
     setTimeout(() => {
       
