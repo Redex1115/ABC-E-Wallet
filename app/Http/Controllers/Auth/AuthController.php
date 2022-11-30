@@ -63,32 +63,59 @@ class AuthController extends Controller
         $data = $request->all();
         $check = $this->create($data);
 
-        
+        if($check){
+            $user = User::where('account_id', $request -> account_id)->first();
+            if($request -> has('can_deposit')){
+                $data = array('user_id' => $request -> account_id,'permission_id' => 1);
+                DB::table('user_permissions')->insert($data);
+            }
+            if($request -> has('can_withdraw')){
+                $data = array('user_id' => $request -> account_id,'permission_id' => 2);
+                DB::table('user_permissions')->insert($data);
+            }
+            if($request -> has('can_transfer')){
+                $data = array('user_id' => $request -> account_id,'permission_id' => 3);
+                DB::table('user_permissions')->insert($data);
+            }
+
+            if($user ->hasWallet('default')){
+                $wallet = $user -> wallet;
+            }
+            else if($user -> hasWallet('my-wallet')){
+                $wallet = $user -> getWallet('my-wallet');
+            }
+            else{
+                $wallet = $user->createWallet([
+                    'name' => 'New Wallet',
+                    'slug' => 'my-wallet',
+                ]);
+            }
+        }
 
         if($request->accountLevel == 2)
         {
             Toastr::success('You successfully register a branch', 'Branch Register', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('admin/table');
+            return back();
         }
         else if($request->accountLevel == 3)
         {
             Toastr::success('You successfully register an agent', 'Agent Register', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('admin/table');
+            return back();
         }
         else if($request->accountLevel == 4)
         {
             Toastr::success('You successfully register a member', 'Member Register', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('admin/table');
+            return back();
         }
         else if($request->accountLevel == sub)
         {
             Toastr::success('You successfully register a sub account', 'Sub Account Register', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('admin/table');
+            return back();
         }
         else
         {
             Toastr::error('Incorrect input. Please try again', 'Error', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('admin/table');
+            return back();
         }
     }
 
