@@ -44,10 +44,18 @@ class AdminController extends Controller
                 Toastr::success('You Successfully LogIn', 'Admin Login', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
                 return redirect('admin/dashboard');
             }
+            else if(Auth::user()->isBranch()){
+                Toastr::success('You Successfully LogIn', 'Branch Login', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+                return redirect('admin/dashboard');
+            }
+            else if(Auth::user()->isAgent()){
+                Toastr::success('You Successfully LogIn', 'Agent Login', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+                return redirect('admin/dashboard');
+            }
         }
         else{
             Toastr::error('Wrong User Name and Password', 'Invalid Input', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('admin/login');
+            return back();
         }
     }
 
@@ -130,20 +138,22 @@ class AdminController extends Controller
 
     //Show Wallet
     public function showWallet(){
-        $users = User::where('account_id', '!=', Auth::user()->account_id)->get();
+        $self = User::where('account_id', '=', Auth::user()->account_id)->get();
+        $others = User::where('account_id', '!=', Auth::user()->account_id)->get();
 
         $user_permissions = DB::table('user_permissions')
         ->leftjoin('permissions','user_permissions.permission_id','=','permissions.id')
         ->select('user_permissions.*', 'permissions.permission_name as pName')
-        ->where('user_permissions.user_id',Auth::user()->id)
+        ->where('user_permissions.user_id',Auth::user()->account_id)
         ->get(); 
 
         $wallets = DB::table('wallets')
         ->leftjoin('users','wallets.holder_id','=','users.id')
         ->select('wallets.*','users.loginID as uName')
+        ->orderBy('users.loginID','asc')
         ->get();
 
-        return view('admin/wallet', compact('users','wallets','user_permissions'));
+        return view('admin/wallet', compact('self','others','wallets','user_permissions'));
     }
 
     //Deposit
