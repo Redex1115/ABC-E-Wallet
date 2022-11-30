@@ -123,7 +123,15 @@ class AuthController extends Controller
     {
         $accID = '';
         for($i = 0; $i < $limit; $i++){ $accID .= mt_rand(0, 9); }
-        return $accID;
+        $users = User::all();
+        foreach($users as $user){
+            if($accID == $user -> account_id){
+                generateAccID(12);
+            }
+            else{
+                return $accID;
+            }
+        }
     }
     
     public function create(array $data){
