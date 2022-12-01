@@ -78,18 +78,8 @@ class AuthController extends Controller
                 DB::table('user_permissions')->insert($data);
             }
 
-            if($user ->hasWallet('default')){
-                $wallet = $user -> wallet;
-            }
-            else if($user -> hasWallet('my-wallet')){
-                $wallet = $user -> getWallet('my-wallet');
-            }
-            else{
-                $wallet = $user->createWallet([
-                    'name' => 'New Wallet',
-                    'slug' => 'my-wallet',
-                ]);
-            }
+            $wallet = $user -> wallet;
+            $wallet -> balance;
         }
 
         if($request->accountLevel == 2)
