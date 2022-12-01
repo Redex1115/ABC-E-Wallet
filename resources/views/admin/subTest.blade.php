@@ -34,25 +34,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($parents as $parent)
+                        @foreach($subparents as $subparent)
                         <tr>
-                            <td>{{$parent->account_id}}</td>
-                            @if(count($parent->subparent))
-                                <td><a href="{{url('admin/subTest',['id' => $parent->id])}}" target="_blank">{{$parent->loginID}}</a></td>
+                            <td>{{$subparent->account_id}}</td>
+                            @if(count($subparent->subparent))
+                                <td><a href="{{url('admin/subTest',['id' => $subparent->id])}}" target="_blank">{{$subparent->loginID}}</a></td>
                             @else
-                                <td>{{$parent->loginID}}</td>
+                                <td>{{$subparent->loginID}}</td>
                             @endif
-                            <td>{{$parent->currency}}</td>
+                            <td>{{$subparent->currency}}</td>
                             <td>00.00</td>
-                            <td>{{number_format($parent->wBalance/100,2)}}</td>
+                            <td>{{number_format($subparent->balance/100,2)}}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-            <!-- @if(count($parent->subparent))
-                @include('admin.subParent',['subparents' => $parent->subparent])
-            @endif -->
     </div>
 </div>
 

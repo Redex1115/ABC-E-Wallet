@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Brian2694\Toastr\Facades\Toastr;
@@ -41,6 +42,8 @@ class AdminController extends Controller
         if(Auth::attempt($credentials))
         {
             if(Auth::user()->isAdmin()){
+                $wallet = Auth::user()->wallet;
+                $wallet->balance;
                 Toastr::success('You Successfully LogIn', 'Admin Login', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
                 return redirect('admin/dashboard');
             }
@@ -84,9 +87,11 @@ class AdminController extends Controller
 
     //Show Table
     public function showTable($id){
+        //treeview
         $parents = User::where('created_by',0)->get();
+        //info
         $users = DB::table('users')
-        ->leftjoin('infos','users.id','=','infos.userID')
+        ->leftjoin('infos','users.account_id','=','infos.userID')
         ->select('users.*','infos.ic as userIc','infos.handphone_number as userHp','infos.address as userAddress','infos.remark as userRemark','infos.status as userStatus')
         ->where('users.account_id',$id)
         ->get();
@@ -167,7 +172,7 @@ class AdminController extends Controller
         }
         else{
             Toastr::info('You do not have any wallet', 'Missing Wallet', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return redirect('home');
+            return redirect('admin/wallet');
         }
 
         if($request -> amount > $user -> credit_limit){
@@ -234,13 +239,52 @@ class AdminController extends Controller
 
     //Show Test Blade
     public function showTest(){
-        $user_permissions = DB::table('user_permissions')
-        ->leftjoin('permissions','user_permissions.permission_id','=','permissions.id')
-        ->select('user_permissions.*', 'permissions.permission_name as pName')
-        ->where('user_permissions.user_id',Auth::user()->id)
+        // $parents = DB::table('users')
+        // ->leftjoin('wallets','users.id','=','wallets.holder_id')
+        // ->select('users.*','wallets.balance as wBalance')
+        // ->where('created_by',0)
+        // ->get();
+
+        $parents = User::leftjoin('wallets', function($join){
+            $join ->on('users.id','=','wallets.holder_id');
+        })
+        ->select('users.*','wallets.balance as wBalance')
+        ->where('created_by',0)
         ->get();
 
-        $users = DB::table('users')->where('id','!=', Auth::user()->id)->get();
-        return view('admin/test', compact('users','user_permissions'));
+        $user= User::where('id',Auth::user()->id)->first();
+        $wallet = $user -> getWallet('my-wallet');
+
+        return view('admin/test', compact('wallet','parents'));
+    }
+
+    //Show Sub Test Blade
+    public function showSubTest($id){
+        $parents = User::where('created_by',$id-1)
+        ->get();
+
+        foreach($parents as $parent){
+            if(count($parent->subparent)){
+                $subparents = $parent -> subparent;
+            }
+        }
+
+
+        return view('admin/subTest', compact('subparents'));
+    }
+
+    public function checkPassword(Request $request){
+        $user = User::findOrFail(Auth::user()->id);
+
+        if(Hash::check($request->password, $user->password)){
+            Toastr::success('aaa', 'aaa',["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-yop-right"]);
+            return redirect('admin/test');
+        }
+        else{
+            Toastr::error('bbb', 'bbb', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-bottom-right"]);
+            return redirect('admin/test');
+        }
+        Toastr::info('ccc','ccc',["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-bottom-right"]);
+        return redirect('admin/test');
     }
 }
