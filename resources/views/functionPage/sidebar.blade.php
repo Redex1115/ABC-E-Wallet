@@ -10,11 +10,11 @@
         <!-- Sidebar navigation-->            
         <nav class="sidebar-nav">
             <ul id="sidebarnav">
-                <li class="selected"> <a class="waves-effect waves-dark active" href="{{url('admin/dashboard')}}" aria-expanded="false"><i class="fa fa-tachometer"></i><span class="hide-menu">Dashboard</span></a></li>
+                <li> <a class="waves-effect waves-dark" href="{{url('admin/dashboard')}}" aria-expanded="false"><i class="fa fa-tachometer"></i><span class="hide-menu">Dashboard</span></a></li>
                 <li><a class="waves-effect waves-dark" href="{{url('admin/wallet')}}" aria-expanded="false"><i class="fa fa-dollar"></i><span class="hide-menu"></span>Wallet</a></li>
                 <li><a class="waves-effect waves-dark" href="{{url('admin/table',['id' => Auth::user()->account_id])}}" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu"></span>Member Entry</a></li>
                 <li><a class="waves-effect waves-dark" href="{{url('admin/transactionHistory')}}" aria-expanded="false"><i class="fa fa-history" aria-hidden="true"></i><span class="hide-menu"></span>Transaction History</a></li>
-                <li><a class="waves-effect waves-dark" href="{{url('admin/test')}}" aria-expanded="false"><i class="fa fa-history" aria-hidden="true"></i><span class="hide-menu"></span>Test</a></li>
+                <li><a class="waves-effect waves-dark" href="{{url('admin/test')}}" aria-expanded="false"><i class="fa fa-history" aria-hidden="true"></i><span class="hide-menu"></span>Member Balance</a></li>
                 <li><a class="waves-effect waves-dark" href="{{url('admin/logout')}}" aria-expanded="false"><i class="fa fa-reply"></i><span class="hide-menu"></span>Logout</a></li>
             </ul>
         </nav>
