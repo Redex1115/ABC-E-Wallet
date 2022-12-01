@@ -163,9 +163,11 @@ class AdminController extends Controller
 
     //Deposit
     public function deposit(Request $request){
+
         $user = User::where('id',$request -> userID)->first();
-        if($user-> hasWallet('default')){
+        if($wallet = $user->wallet){
             $wallet = $user->wallet;
+            $wallet->balance;
         }
         elseif($user-> hasWallet('my-wallet')){
             $wallet = $user->getWallet('my-wallet');
@@ -175,8 +177,8 @@ class AdminController extends Controller
             return redirect('admin/wallet');
         }
 
-        if($request -> amount > $user -> credit_limit){
-            $remaining = $user -> credit_limit - $wallet -> balance;
+        if($request -> amount + ($wallet -> balance/100) > $user -> credit_limit){
+            $remaining = $user -> credit_limit - ($wallet -> balance/100);
             Toastr::info('Your credit limit is RM'.$user -> credit_limit.'</br>You can deposit RM'.$remaining.' more','Over Limit', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return redirect('admin/wallet');
         }
