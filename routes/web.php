@@ -70,6 +70,8 @@ Route::get('profile', [ProfileController::class, 'view']);
 
 //Testing page
 Route::get('admin/test', [AdminController::class, 'showTest']);
+Route::post('checkPassword',[AdminController::class, 'checkPassword']);
+Route::get('admin/subTest/{id}',[AdminController::class,'showSubTest']);
 
 Auth::routes();
 
