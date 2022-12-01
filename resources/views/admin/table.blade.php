@@ -102,11 +102,11 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="ic">IC No</label>
-                                            <input type="text" name="ic" id="ic" class="form-control form-control-outline" value="{{$user -> userIc}}" placeholder="IC No">
+                                            <input type="text" name="ic" id="ic" class="form-control form-control-outline" value="{{$user -> userIc}}" placeholder="IC No" @if(Auth::user()->id != $user->created_by) readonly @endif>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="phoneNO">Phone No</label>
-                                            <input type="text" name="phoneNO" id="phoneNO" class="form-control form-control-outline" value="{{$user -> userHp}}" placeholder="Phone No">
+                                            <input type="text" name="phoneNO" id="phoneNO" class="form-control form-control-outline" value="{{$user -> userHp}}" placeholder="Phone No" @if(Auth::user()->id != $user->created_by) readonly @endif>
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -122,7 +122,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="address">Address</label>
-                                            <input type="text" name="address" id="address" class="form-control form-control-outline" value="{{$user -> userAddress}}" placeholder="Address">
+                                            <input type="text" name="address" id="address" class="form-control form-control-outline" value="{{$user -> userAddress}}" placeholder="Address" @if(Auth::user()->id != $user->created_by) readonly @endif>
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -136,7 +136,7 @@
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label for="status">Status</label>
-                                            <input type="text" name="status" id="status" class="form-control form-control-outline" value="{{$user -> userStatus}}" placeholder="Good">
+                                            <input type="text" name="status" id="status" class="form-control form-control-outline" value="{{$user -> userStatus}}" placeholder="Good" @if(Auth::user()->id != $user->created_by) readonly @endif>
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label for="created_by">Created By</label>
@@ -146,7 +146,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="remark">Remark</label>
-                                            <textarea name="remark" id="remark" class="form-control" row="1" value="" placeholder="{{$user -> userRemark}}"></textarea>
+                                            <textarea name="remark" id="remark" class="form-control" row="1" value="" placeholder="{{$user -> userRemark}}" @if(Auth::user()->id != $user->created_by) readonly @endif></textarea>
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -168,8 +168,6 @@
                                             @if($user -> created_by == Auth::user()->id)
                                                 <button type="submit" class="btn btn-rounded btn-outline-success">Update</button>
                                             @endif    
-                                            <!-- For Testing -->
-                                                <button type="submit" class="btn btn-rounded btn-outline-success">Update</button>
                                         </div>
                                     </div>
                                 </form>
