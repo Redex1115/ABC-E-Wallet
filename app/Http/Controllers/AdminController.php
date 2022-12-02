@@ -88,7 +88,7 @@ class AdminController extends Controller
     //Show Table
     public function showTable($id){
         //treeview
-        $parents = User::where('created_by',0)->get();
+        $parents = User::where('id',Auth::user()->id)->get();
         //info
         $users = DB::table('users')
         ->leftjoin('infos','users.account_id','=','infos.userID')
@@ -241,11 +241,6 @@ class AdminController extends Controller
 
     //Show Test Blade
     public function showTest(){
-        // $parents = DB::table('users')
-        // ->leftjoin('wallets','users.id','=','wallets.holder_id')
-        // ->select('users.*','wallets.balance as wBalance')
-        // ->where('created_by',0)
-        // ->get();
 
         $parents = User::leftjoin('wallets', function($join){
             $join ->on('users.id','=','wallets.holder_id');
@@ -253,6 +248,13 @@ class AdminController extends Controller
         ->select('users.*','wallets.balance as wBalance')
         ->where('created_by',0)
         ->get();
+
+        // $totalBalance = User::leftjoin('wallets', function($join){
+        //     $join ->on('users.id','=','wallets.holder_id');
+        // })
+        // ->select('users.*','wallets.balance as wBalance')
+        // ->where('created_by',0)
+        // ->get();
 
         $user= User::where('id',Auth::user()->id)->first();
         $wallet = $user -> getWallet('my-wallet');
