@@ -57,11 +57,28 @@ class AuthController extends Controller
             'created_by' => 'required',
         ]);
 
-        // generate account id automatically
         $request['account_id'] = $this->generateAccID(12);
 
-        $data = $request->all();
-        $check = $this->create($data);
+        if($request->accountLevel === "sub"){
+            $data = ([
+                'loginID' => $request->loginID,
+                'account_id' => $request->account_id,
+                'accountLevel' => Auth::user()->accountLevel,
+                'password' => $request->password,
+                'email' => $request->email,
+                'join_date' => $request->join_date,
+                'currency' => "MYR",
+                'credit_limit' => $request -> credit_limit,
+                'created_by' => Auth::user()->created_by,
+            ]);
+
+            $check = $this->create($data);
+        }
+        else{
+
+            $data = $request->all();
+            $check = $this->create($data);
+        }
 
         if($check){
             $user = User::where('account_id', $request -> account_id)->first();
@@ -77,7 +94,6 @@ class AuthController extends Controller
                 $data = array('user_id' => $request -> account_id,'permission_id' => 3);
                 DB::table('user_permissions')->insert($data);
             }
-
             $wallet = $user -> wallet;
             $wallet -> balance;
         }
@@ -97,7 +113,7 @@ class AuthController extends Controller
             Toastr::success('You successfully register a member', 'Member Register', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return back();
         }
-        else if($request->accountLevel == sub)
+        else if($request->accountLevel == "sub")
         {
             Toastr::success('You successfully register a sub account', 'Sub Account Register', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return back();
