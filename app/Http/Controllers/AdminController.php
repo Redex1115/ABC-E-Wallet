@@ -240,20 +240,8 @@ class AdminController extends Controller
         ->where('created_by',0)
         ->get();
 
-        $name = [];
-        foreach($parents as $parent){
-            
-            $name[] = $parent -> balance;
 
-            if(count($parent->subparent)){
-                $subparents = $parent -> subparent;
-            }
-            foreach($subparents as $subparent){
-                $name[] = $subparent -> balance;
-            }
-        }
 
-        $totalBalance = array_sum($name);
         return view('admin/test', compact('parents'));
     }
 
@@ -266,17 +254,18 @@ class AdminController extends Controller
         ->where('created_by',$id)
         ->get();
 
-        $this -> getChildBalance($id);
-
         return view('admin/subTest', compact('parents'));
     }
 
-    public function getChildBalance($id){
-        $childBalance = User::leftjoin('wallets','users.id','=','wallets.holder_id')
-        ->select('users.*')
-        ->where('created_by',$id)->sum('wallets.balance');
-        
-        return $childBalance;
+    public function getChildren($id){
+        $children = User::where('created_by',1)->get();
+
+        return with(['children'=>$children]);
+
+    }
+
+    public function getSubChildren($id){
+
     }
 
     //Show Transactions (Personal)
