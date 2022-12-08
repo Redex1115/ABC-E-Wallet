@@ -14,43 +14,57 @@
         </div>
     </div>
 </div>
-
 <div class="row">
     <div class="col-md-12">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th colspan="5">Currency: MYR</th>
-                        </tr>
-                    </thead>
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Account ID</th>
-                            <th>Login ID</th>
-                            <th>Currency</th>
-                            <th>B/F</th>
-                            <th>Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($subparents as $subparent)
-                        <tr>
-                            <td>{{$subparent->account_id}}</td>
-                            @if(count($subparent->subparent))
-                                <td><a href="{{url('admin/subTest',['id' => $subparent->id])}}" target="_blank">{{$subparent->loginID}}</a></td>
-                            @else
-                                <td>{{$subparent->loginID}}</td>
-                            @endif
-                            <td>{{$subparent->currency}}</td>
-                            <td>00.00</td>
-                            <td>{{number_format($subparent->balance/100,2)}}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="8">Currency: MYR</th>
+                    </tr>
+                </thead>
+                <thead class="thead-dark">
+                    <tr>
+                    <th>Account ID</th>
+                        <th>Login ID</th>
+                        <th>Currency</th>
+                        <th>B/F</th>
+                        <th>Transaction</th>
+                        <th>Pay/Receive</th>
+                        <th>Account Balance</th>
+                        <th>Total Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($parents as $parent)
+                    <tr>
+                        <td>{{$parent->account_id}}</td>
+                        @if(count($parent->subparent))
+                            <td><a href="{{url('admin/subTest',['id' => $parent->id])}}" target="_blank">{{$parent->loginID}}</a></td>
+                        @else
+                            <td>{{$parent->loginID}}</td>
+                        @endif
+                        <td>{{$parent->currency}}</td>
+                        <td>00.00</td>
+                        <td>00.00</td>
+                        <td>00.00</td>
+                        <td>{{number_format($parent->balance/100,2)}}</td>
+                        <td>{{number_format($parent->wBalance/100,2)}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('b').onclick = function(){
+        var accBal = document.getElementById('a').innerHTML = document.getElementById('accBal');
+
+        console.log(accBal);
+    }
+    
+</script>
 
 @endsection

@@ -69,17 +69,6 @@ class AdminController extends Controller
         return redirect('admin/login');
     }
 
-    //Show History
-    public function showHistory(){
-        $users = DB::table('transactions')
-        ->leftjoin('users','transactions.payable_id','=','users.id')
-        ->select('transactions.*','users.loginID as holderName')
-        ->get();
-
-
-        return view('admin/transactionHistory', compact('users'));
-    }
-
     //Show Profile
     public function showProfile(){
         return view('admin/profile');
@@ -89,6 +78,7 @@ class AdminController extends Controller
     public function showTable($id){
         //treeview
         $parents = User::where('id',Auth::user()->id)->get();
+        
         //info
         $users = DB::table('users')
         ->leftjoin('infos','users.account_id','=','infos.userID')
@@ -143,8 +133,8 @@ class AdminController extends Controller
 
     //Show Wallet
     public function showWallet(){
-        $self = User::where('account_id', '=', Auth::user()->account_id)->get();
-        $others = User::where('account_id', '!=', Auth::user()->account_id)->get();
+        $self = User::where('account_id','=',Auth::user()->account_id)->get();
+        $others = User::where('account_id','!=',Auth::user()->account_id)->get();
 
         $user_permissions = DB::table('user_permissions')
         ->leftjoin('permissions','user_permissions.permission_id','=','permissions.id')
@@ -158,7 +148,7 @@ class AdminController extends Controller
         ->orderBy('users.loginID','asc')
         ->get();
 
-        return view('admin/wallet', compact('self','others','wallets','user_permissions'));
+        return view('admin/wallet', compact('wallets','user_permissions','self','others'));
     }
 
     //Deposit
@@ -246,49 +236,58 @@ class AdminController extends Controller
             $join ->on('users.id','=','wallets.holder_id');
         })
         ->select('users.*','wallets.balance as wBalance')
+        ->orderBy('join_date','asc')
         ->where('created_by',0)
         ->get();
 
-        // $totalBalance = User::leftjoin('wallets', function($join){
-        //     $join ->on('users.id','=','wallets.holder_id');
-        // })
-        // ->select('users.*','wallets.balance as wBalance')
-        // ->where('created_by',0)
-        // ->get();
+        $name = [];
+        foreach($parents as $parent){
+            
+            $name[] = $parent -> balance;
 
-        $user= User::where('id',Auth::user()->id)->first();
-        $wallet = $user -> getWallet('my-wallet');
+            if(count($parent->subparent)){
+                $subparents = $parent -> subparent;
+            }
+            foreach($subparents as $subparent){
+                $name[] = $subparent -> balance;
+            }
+        }
 
-        return view('admin/test', compact('wallet','parents'));
+        $totalBalance = array_sum($name);
+        return view('admin/test', compact('parents'));
     }
 
     //Show Sub Test Blade
     public function showSubTest($id){
-        $parents = User::where('created_by',$id-1)
+        $parents = User::leftjoin('wallets',function($join){
+            $join ->on('users.id','=','wallets.holder_id');
+        })
+        ->select('users.*','wallets.balance as wBalance')
+        ->where('created_by',$id)
         ->get();
 
-        foreach($parents as $parent){
-            if(count($parent->subparent)){
-                $subparents = $parent -> subparent;
-            }
-        }
+        $this -> getChildBalance($id);
 
-
-        return view('admin/subTest', compact('subparents'));
+        return view('admin/subTest', compact('parents'));
     }
 
-    public function checkPassword(Request $request){
-        $user = User::findOrFail(Auth::user()->id);
-
-        if(Hash::check($request->password, $user->password)){
-            Toastr::success('aaa', 'aaa',["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-yop-right"]);
-            return redirect('admin/test');
-        }
-        else{
-            Toastr::error('bbb', 'bbb', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-bottom-right"]);
-            return redirect('admin/test');
-        }
-        Toastr::info('ccc','ccc',["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-bottom-right"]);
-        return redirect('admin/test');
+    public function getChildBalance($id){
+        $childBalance = User::leftjoin('wallets','users.id','=','wallets.holder_id')
+        ->select('users.*')
+        ->where('created_by',$id)->sum('wallets.balance');
+        
+        return $childBalance;
     }
+
+    //Show Transactions (Personal)
+    public function showTransactions($id){
+        $histories = DB::table('transactions')
+        ->leftjoin('users','transactions.payable_id','=','users.id')
+        ->select('transactions.*','users.loginID as holderName')
+        ->where('users.account_id',$id)
+        ->get();
+
+        return view('admin/transactionHistory',compact('histories'));
+    }
+
 }

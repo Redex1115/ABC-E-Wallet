@@ -25,7 +25,6 @@ Route::get('admin/logout', [AdminController::class, 'logout']);
 //Dashboard & Table & Transaction History & Profile & Wallet
 Route::get('admin/dashboard', function(){return view('admin/dashboard');});
 
-Route::get('admin/transactionHistory', [AdminController::class, 'showHistory']);
 Route::get('admin/profile', [AdminController::class, 'showProfile']);
 Route::get('admin/wallet', [AdminController::class, 'showWallet']);
 
@@ -70,8 +69,8 @@ Route::get('profile', [ProfileController::class, 'view']);
 
 //Testing page
 Route::get('admin/test', [AdminController::class, 'showTest']);
-Route::post('checkPassword',[AdminController::class, 'checkPassword']);
 Route::get('admin/subTest/{id}',[AdminController::class,'showSubTest']);
+Route::get('checkout/history/{id}',[AdminController::class,'showTransactions']);
 
 Auth::routes();
 

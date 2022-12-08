@@ -37,27 +37,25 @@
                         <tr>
                             <th>#</th>
                             <th>UUID</th>
-                            <th>User Name</th>
+                            <th>Description</th>
                             <th>Type</th>
-                            <th>Currency</th>
                             <th>Pay/Receive</th>
                             <th>Created Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($users as $user)
+                        @foreach($histories as $history)
                             <tr>
                                 <td>{{$loop -> iteration}}</td>
-                                <td>{{$user -> uuid }}</td>
-                                <td>{{$user -> holderName}}</td>
-                                <td>{{$user -> type}}</td>
-                                <td>MYR (RM)</td>
-                                @if($user -> amount < 0 )
-                                    <td><span class="text-danger">{{number_format($user -> amount /100 ,2)}}</span></td>
-                                @elseif($user -> amount > 0 )
-                                    <td><span class="text-success">+{{number_format($user -> amount /100 ,2)}}</span></td>
+                                <td>{{$history -> uuid}}</td>
+                                <td>{{$history -> meta}}</td>
+                                <td>{{$history -> type}}</td>
+                                @if($history -> amount >= 0)
+                                    <td><span class="text-success">+{{number_format($history -> amount/100,2)}}</span></td>
+                                @elseif($history -> amount < 0)
+                                    <td><span class="text-danger">{{number_format($history -> amount/100,2)}}</span></td>
                                 @endif
-                                <td>{{$user -> created_at}}</td>
+                                <td>{{$history -> created_at}}</td>
                             </tr>
                         @endforeach
                     </tbody>
