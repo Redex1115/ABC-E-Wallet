@@ -86,12 +86,19 @@ class AdminController extends Controller
         ->where('users.account_id',$id)
         ->get();
 
-        return view('admin/table', compact('parents','users'));
+        $user_permissions = DB::table('user_permissions')
+        ->leftjoin('permissions','user_permissions.permission_id','=','permissions.id')
+        ->select('user_permissions.*', 'permissions.permission_name as pName')
+        ->where('user_permissions.user_id',Auth::user()->account_id)
+        ->get(); 
+
+        return view('admin/table', compact('parents','users','user_permissions'));
     }
 
     //Display Info
     public function info($id){
         $user = User::where('account_id',$id)->first();
+
         return view('admin/table', compact('user'));
     }
 
@@ -240,9 +247,29 @@ class AdminController extends Controller
         ->where('created_by',0)
         ->get();
 
+        foreach($parents as $parent){
+            if(count($parent -> subparent)){
+                $subparents = $parent -> subparent;
+            }
+        }
 
+        $group = User::leftjoin('wallets', function($join){
+            $join ->on('users.id','=','wallets.holder_id');
+        })
+        ->with('subparent')->get();
 
+        $name = [];
+        foreach($group as $person){
+            $name[] = $person -> loginID;
+        }
+
+        dd($name);
         return view('admin/test', compact('parents'));
+    }
+
+    public function getChildren($id){
+        $children = User::where('created_by',$id)->get();
+        return $children;
     }
 
     //Show Sub Test Blade
@@ -255,17 +282,6 @@ class AdminController extends Controller
         ->get();
 
         return view('admin/subTest', compact('parents'));
-    }
-
-    public function getChildren($id){
-        $children = User::where('created_by',1)->get();
-
-        return with(['children'=>$children]);
-
-    }
-
-    public function getSubChildren($id){
-
     }
 
     //Show Transactions (Personal)
