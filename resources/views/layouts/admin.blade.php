@@ -29,7 +29,7 @@
         
         @if(!Session::has('adminData'))
             <script type="text/javascript">
-                window.location.href="{{url('admin/login')}}"
+                window.location.href="{{route('admin.login')}}"
             </script>
         @endif
     </head> 
