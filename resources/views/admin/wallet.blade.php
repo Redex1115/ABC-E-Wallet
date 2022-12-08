@@ -36,7 +36,6 @@
                                 <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#depositModal">Deposit</button>
                                 @break
                             @endif
-                            
                         @endforeach
 
                         @foreach($user_permissions as $user_permission)
@@ -51,6 +50,7 @@
                                 <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#transferModal">Transfer</button>
                                 @break
                             @endif
+                            
                         @endforeach
                     @endif
                     </div>
