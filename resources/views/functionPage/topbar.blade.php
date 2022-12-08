@@ -2,11 +2,9 @@
 <header class="topbar">
     <nav class="navbar top-navbar navbar-expand-md navbar-dark">
         <div class="navbar-header">
-            <a class="navbar-brand" href="index.html">
-                <!-- Logo Icon -->
-                <i class="fa fa-money fa-2x" style="color: black;"></i>
+            <a class="navbar-brand" href="#">
                 <!-- Logo text -->
-                <span style="display: none; color: black; padding-left: 5px;">Admin BackEnd</span>
+                <span style="display: none; color: black; padding-left: 5px;">{{Auth::user()->loginID}}</span>
             </a>
         </div>
         <div class="navbar-collapse">
