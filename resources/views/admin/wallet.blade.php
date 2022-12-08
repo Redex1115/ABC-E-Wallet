@@ -50,7 +50,6 @@
                                 <button type="button" class="btn btn-rounded btn-outline-warning" data-toggle="modal" data-target="#transferModal">Transfer</button>
                                 @break
                             @endif
-                            
                         @endforeach
                     @endif
                     </div>
