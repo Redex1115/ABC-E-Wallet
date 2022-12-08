@@ -9,6 +9,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 </head>
+
 <body>
     <div id="app">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
