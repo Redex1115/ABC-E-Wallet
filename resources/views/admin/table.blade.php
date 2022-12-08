@@ -72,7 +72,7 @@
                     </div>
                     <div class="ml-auto">
                         @if(!Auth::user()->isMember())
-                        <button type="button" class="btn btn-rounded btn-outline-success" data-toggle="modal" data-target=".bd-example-modal-lg">Create</button>
+                            <button type="button" class="btn btn-rounded btn-outline-success" data-toggle="modal" data-target=".bd-example-modal-lg">Create</button>
                         @endif
                     </div>
                 </div>
@@ -157,15 +157,44 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12" style="margin-bottom:0px !important;">
                                             <label>Permission</label>
-                                            <div class="col-md-3">
-                                                <span><input type="checkbox" style="vertical-align:middle !important;">&nbsp Deposit</span>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <span><input type="checkbox" style="vertical-align:middle !important;">&nbsp Withdraw</span>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <span><input type="checkbox"  style="vertical-align:middle !important;">&nbsp Transfer</span>
-                                            </div>
+                                            @if(Auth::user()->isAdmin())
+                                                <div class="col-md-3">
+                                                    <span><input type="checkbox" style="vertical-align:middle !important;" checked disabled="disabled">&nbsp Deposit</span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <span><input type="checkbox" style="vertical-align:middle !important;" checked disabled="disabled">&nbsp Deposit</span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <span><input type="checkbox" style="vertical-align:middle !important;" checked disabled="disabled">&nbsp Deposit</span>
+                                                </div>
+                                            @else
+                                                @foreach($user_permissions as $user_permission)
+                                                    @if(Auth::user()->account_id == $user_permission -> user_id && $user_permission -> pName == "can_deposit")
+                                                        <div class="col-md-3">
+                                                            <span><input type="checkbox" style="vertical-align:middle !important;" checked disabled="disabled">&nbsp Deposit</span>
+                                                        </div>
+                                                        @break
+                                                    @endif
+                                                @endforeach
+
+                                                @foreach($user_permissions as $user_permission)
+                                                    @if(Auth::user()->account_id == $user_permission -> user_id && $user_permission -> pName == "can_withdraw")
+                                                        <div class="col-md-3">
+                                                            <span><input type="checkbox"  style="vertical-align:middle !important;" checked disabled="disabled">&nbsp Withdraw</span>
+                                                        </div>
+                                                        @break
+                                                    @endif
+                                                @endforeach
+
+                                                @foreach($user_permissions as $user_permission)
+                                                    @if(Auth::user()->account_id == $user_permission -> user_id && $user_permission -> pName == "can_transfer")
+                                                        <div class="col-md-3">
+                                                            <span><input type="checkbox" style="vertical-align:middle !important;" checked disabled="disabled">&nbsp Transfer</span>
+                                                        </div>
+                                                        @break
+                                                    @endif
+                                                @endforeach
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -190,7 +219,7 @@
     {{ csrf_field() }}
     <input type="hidden" name="account_id" id="account_id" value="1" min="0">
     <input type="hidden" name="currency" id="currency" value="MYR">
-    <input type="hidden" name="credit_limit" id="credit_limit" class="form-control form-control-line">
+    <input type="hidden" name="created_by" id="created_by" value="{{Auth::user()->id}}">
     <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -238,8 +267,8 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="created-by">Created By</label>
-                                <input type="text" name="created_by" class="form-control form-control-line" readonly value="{{Auth::user()->id}}">
+                                <label for="credit_limit">Credit_limit</label>
+                                <input type="text" name="credit_limit" class="form-control form-control-line" min="0" placeholder="Enter Account Credit Limit">
                             </div>
                         </div>
                         <div class="col-md-4">
