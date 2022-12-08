@@ -31,14 +31,19 @@
         display: none;
     }
 
-    #opened{
-        display: block !important;
-    }
-
     .active {
         display: block;
     }
 
+    .form-group{
+        margin-bottom:15px !important;
+    }
+    input[type="text"],input[type="email"],input[type="password"]{
+        font-size:11px;
+    }
+    .page-titles{
+        margin: 0 10px !important;
+    }
 </style>
 
 <!-- Title -->
@@ -60,13 +65,15 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
+            <div class="card-body" style="padding-bottom:0.5rem !important;">
                 <div class="d-flex">
                     <div>
                         <h4 class="card-title">User</h4>
                     </div>
                     <div class="ml-auto">
+                        @if(!Auth::user()->isMember())
                         <button type="button" class="btn btn-rounded btn-outline-success" data-toggle="modal" data-target=".bd-example-modal-lg">Create</button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -74,9 +81,9 @@
                 <div class="col-md-3">
                     <div class="tree-view">
                         @foreach($parents as $parent)
-                            <ul id="myUl">
+                            <ul id="myUl$parent->id">
                                 <li><span class="caret"><a href="{{ url('admin/table',['id' => $parent->account_id])}}">{{$parent->loginID}}</a></span></span>
-                                    <ul class="nested" id="opened">
+                                    <ul class="nested">
                                         <li>
                                             @if(count($parent->subparent))
                                                 @include('admin.subParent',['subparents' => $parent->subparent])
@@ -88,55 +95,47 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="col-md-9" style="font-size: 14px;">
+                <div class="col-md-9" style="font-size: 11px;">
                     <div class="row">
-                        <div class="col-md-12">
-                            <h3 class="text-success">User Info</h3>
+                        <div class="col-md-11">
+                            <h4 class="text-success">User Info</h4>
                             @foreach($users as $user)
                                 <form action="{{ url('admin/update')}}" method="POST">
                                     @csrf
                                     <div class="form-row">
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label for="accID">Account ID</label>
                                             <input type="text" name="accID" id="accID" class="form-control form-control-outline" value="{{$user -> account_id}}" placeholder="Account ID" readonly>
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label for="ic">IC No</label>
-                                            <input type="text" name="ic" id="ic" class="form-control form-control-outline" value="{{$user -> userIc}}" placeholder="IC No" @if(Auth::user()->id != $user->created_by) readonly @endif>
+                                            <input type="text" name="ic" id="ic" class="form-control form-control-outline" value="{{$user -> userIc}}" placeholder="IC No">
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label for="phoneNO">Phone No</label>
-                                            <input type="text" name="phoneNO" id="phoneNO" class="form-control form-control-outline" value="{{$user -> userHp}}" placeholder="Phone No" @if(Auth::user()->id != $user->created_by) readonly @endif>
+                                            <input type="text" name="phoneNO" id="phoneNO" class="form-control form-control-outline" value="{{$user -> userHp}}" placeholder="Phone No">
                                         </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-3">
                                             <label for="userName">User Name</label>
                                             <input type="text" class="form-control form-control-outline" value="{{$user -> loginID}}" placeholder="User Name" readonly>
                                         </div>
-                                        <div class="form-group col-md-6">
+                                    </div>
+                                    <div class="form-row">  
+                                        <div class="form-group col-md-3">
                                             <label for="email">Email Address</label>
                                             <input type="email" class="form-control form-control-outline" value="{{$user -> email}}" placeholder="Email" readonly>
                                         </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-12">
-                                            <label for="address">Address</label>
-                                            <input type="text" name="address" id="address" class="form-control form-control-outline" value="{{$user -> userAddress}}" placeholder="Address" @if(Auth::user()->id != $user->created_by) readonly @endif>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label for="">Credit Limit</label>
-                                            <input type="text" class="form-control form-control-outline" value="{{$user -> credit_limit}}" placeholder="00000" readonly>
-                                        </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label for="joinDate">Join Date</label>
                                             <input type="text" class="form-control form-control-outline" value="{{$user -> join_date}}" placeholder="1111-11-11" readonly>
                                         </div>
                                         <div class="form-group col-md-2">
+                                            <label for="">Credit Limit</label>
+                                            <input type="text" class="form-control form-control-outline" value="{{$user -> credit_limit}}" placeholder="00000" readonly>
+                                        </div>
+                                        <div class="form-group col-md-2">
                                             <label for="status">Status</label>
-                                            <input type="text" name="status" id="status" class="form-control form-control-outline" value="{{$user -> userStatus}}" placeholder="Good" @if(Auth::user()->id != $user->created_by) readonly @endif>
+                                            <input type="text" name="status" id="status" class="form-control form-control-outline" value="{{$user -> userStatus}}" placeholder="Good">
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label for="created_by">Created By</label>
@@ -145,28 +144,34 @@
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
-                                            <label for="remark">Remark</label>
-                                            <textarea name="remark" id="remark" class="form-control" row="1" value="" placeholder="{{$user -> userRemark}}" @if(Auth::user()->id != $user->created_by) readonly @endif></textarea>
+                                            <label for="address">Address</label>
+                                            <input type="text" name="address" id="address" class="form-control form-control-outline" value="{{$user -> userAddress}}" placeholder="Address">
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
+                                            <label for="remark">Remark</label>
+                                            <textarea name="remark" id="remark" class="form-control" row="1" value="" placeholder="{{$user -> userRemark}}"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12" style="margin-bottom:0px !important;">
                                             <label>Permission</label>
                                             <div class="col-md-3">
-                                                <span><input type="checkbox">Deposit</span>
+                                                <span><input type="checkbox" style="vertical-align:middle !important;">&nbsp Deposit</span>
                                             </div>
                                             <div class="col-md-3">
-                                                <span><input type="checkbox">Withdraw</span>
+                                                <span><input type="checkbox" style="vertical-align:middle !important;">&nbsp Withdraw</span>
                                             </div>
                                             <div class="col-md-3">
-                                                <span><input type="checkbox">Transfer</span>
+                                                <span><input type="checkbox"  style="vertical-align:middle !important;">&nbsp Transfer</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="ml-auto">
                                             @if($user -> created_by == Auth::user()->id)
-                                                <button type="submit" class="btn btn-rounded btn-outline-success">Update</button>
+                                                <button type="submit" class="btn btn-rounded btn-outline-success" style="margin-bottom:5px;!important">Update</button>
                                             @endif    
                                         </div>
                                     </div>
@@ -185,6 +190,7 @@
     {{ csrf_field() }}
     <input type="hidden" name="account_id" id="account_id" value="1" min="0">
     <input type="hidden" name="currency" id="currency" value="MYR">
+    <input type="hidden" name="credit_limit" id="credit_limit" class="form-control form-control-line">
     <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -224,35 +230,29 @@
                         </div>
                     </div> 
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="date">Created Date</label>
                                 <input type="date" name="join_date" id="date" class="form-control form-control-line" readonly value="">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="created-by">Created By</label>
                                 <input type="text" name="created_by" class="form-control form-control-line" readonly value="{{Auth::user()->id}}">
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="creditLimit">Credit Limit</label>
-                                <input type="number" name="credit_limit" id="credit_limit" class="form-control form-control-line">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="accountLevel">Role</label>
                             <select name="accountLevel" id="accountLevel" class="form-control form-control-line">
                                 @if(auth()->user()->isAdmin())
-                                    <option value="10">Sub Account</option>
+                                    <option value="sub">Sub Account</option>
                                     <option value="2">Branch</option>
                                 @elseif(auth()->user()->isBranch())
-                                    <option value="10">Sub Account</option>
+                                    <option value="sub">Sub Account</option>
                                     <option value="3">Agent</option>
                                 @elseif(auth()->user()->isAgent())
-                                    <option value="10">Sub Account</option>
+                                    <option value="sub">Sub Account</option>
                                     <option value="4" selected="">Member</option>
                                 @endif
                             </select>
@@ -291,22 +291,6 @@
     $(document).ready(function(){
         document.getElementById("date").valueAsDate = new Date();
     });
-</script>
-
-<script>
-    $('#select-all').click(function(event) {   
-        if(this.checked) {
-            // Iterate each checkbox
-            $(':checkbox').each(function() {
-                this.checked = true;                        
-            });
-        } else {
-            $(':checkbox').each(function() {
-                this.checked = false;                       
-            });
-        }
-        
-    }); 
 </script>
 
 <script>
