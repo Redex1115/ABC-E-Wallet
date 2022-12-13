@@ -70,8 +70,45 @@ class AdminController extends Controller
     }
 
     //Show Profile
-    public function showProfile(){
-        return view('admin/profile');
+    public function showProfile($id){
+        $user = DB::table('users')
+        ->leftjoin('wallets','users.id','=','wallets.holder_id')
+        ->leftjoin('infos','users.account_id','=','infos.userID')
+        ->select('users.*','infos.ic as ic','infos.handphone_number as hpNo','infos.address as address', 'infos.remark as remark', 'infos.status as status','wallets.balance as balance')
+        ->where('account_id',$id)
+        ->first();
+
+        return view('admin/profile',compact('user'));
+    }
+
+    public function updateProfile(Request $request){
+        $info = Info::where('userID', $request->accID)->first();
+
+        $request -> validate([
+            'accID' => 'required',
+            'ic' => 'nullable',
+            'hpNo' => 'nullable',
+            'address' => 'nullable',
+        ]);
+
+        if(!$info){
+            $addInfo = Info::create([
+                'userID' => $request -> accID,
+                'ic' => $request -> ic,
+                'handphone_number' => $request -> hpNo,
+                'address' => $request -> address,
+            ]);
+        }
+        else{
+            $info -> ic = $request -> ic;
+            $info -> handphone_number = $request -> hpNo;
+            $info -> address = $request -> address;
+            $info -> save();  
+        }
+        
+        Toastr::success('You have successfully update profile', 'Update Profile', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
+        return back();
+
     }
 
     //Show Table

@@ -25,7 +25,8 @@ Route::get('admin/logout', [AdminController::class, 'logout']);
 //Dashboard & Table & Transaction History & Profile & Wallet
 Route::get('admin/dashboard', function(){return view('admin/dashboard');});
 
-Route::get('admin/profile', [AdminController::class, 'showProfile']);
+Route::get('admin/profile/{id}', [AdminController::class, 'showProfile']);
+Route::post('update/profile',[AdminController::class, 'updateProfile']);
 Route::get('admin/wallet', [AdminController::class, 'showWallet']);
 
 //Display Info & Update
