@@ -58,7 +58,7 @@ class AdminController extends Controller
         }
         else{
             Toastr::error('Wrong User Name and Password', 'Invalid Input', ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
-            return back();
+            return view('admin.login');
         }
     }
 
@@ -78,6 +78,7 @@ class AdminController extends Controller
     public function showTable($id){
         //treeview
         $parents = User::where('id',Auth::user()->id)->get();
+        // $parents = User::where('created_by',0)->get();
         
         //info
         $users = DB::table('users')
@@ -86,20 +87,14 @@ class AdminController extends Controller
         ->where('users.account_id',$id)
         ->get();
 
+        //user permission
         $user_permissions = DB::table('user_permissions')
         ->leftjoin('permissions','user_permissions.permission_id','=','permissions.id')
         ->select('user_permissions.*', 'permissions.permission_name as pName')
-        ->where('user_permissions.user_id',Auth::user()->account_id)
+        ->where('user_permissions.user_id',$id)
         ->get(); 
 
         return view('admin/table', compact('parents','users','user_permissions'));
-    }
-
-    //Display Info
-    public function info($id){
-        $user = User::where('account_id',$id)->first();
-
-        return view('admin/table', compact('user'));
     }
 
     //Update info
@@ -180,7 +175,7 @@ class AdminController extends Controller
             return redirect('admin/wallet');
         }
         else{
-            $wallet -> depositFloat($request -> amount);
+            $wallet -> depositFloat($request -> amount,['deposit']);
             Toastr::success('Wallet Deposit RM'.$request -> amount.' Successfully', 'Deposit To '.$user -> loginID, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
             return redirect('admin/wallet');
         }
@@ -206,7 +201,7 @@ class AdminController extends Controller
             return redirect('admin/wallet');
         }
 
-        $wallet -> withdrawFloat($request -> amount);
+        $wallet -> withdrawFloat($request -> amount,['withdraw']);
         Toastr::success('Wallet Withdraw RM'.$request -> amount.' Successfully', 'Withdraw From '.$user -> loginID, ["progressBar" => true, "debug" => true, "newestOnTop" =>true, "positionClass" =>"toast-top-right"]);
         return redirect('admin/wallet');
     }
@@ -237,39 +232,26 @@ class AdminController extends Controller
     }
 
     //Show Test Blade
-    public function showTest(){
+    public function showTest(Request $request){
 
         $parents = User::leftjoin('wallets', function($join){
             $join ->on('users.id','=','wallets.holder_id');
         })
         ->select('users.*','wallets.balance as wBalance')
-        ->orderBy('join_date','asc')
+        ->orderBy('loginID','asc')
         ->where('created_by',0)
         ->get();
 
-        foreach($parents as $parent){
-            if(count($parent -> subparent)){
-                $subparents = $parent -> subparent;
-            }
-        }
-
-        $group = User::leftjoin('wallets', function($join){
-            $join ->on('users.id','=','wallets.holder_id');
-        })
-        ->with('subparent')->get();
-
-        $name = [];
-        foreach($group as $person){
-            $name[] = $person -> loginID;
-        }
-
-        dd($name);
         return view('admin/test', compact('parents'));
     }
 
     public function getChildren($id){
         $children = User::where('created_by',$id)->get();
-        return $children;
+        $name = [];
+        foreach($children as $child){
+            $name[] = ['id'=>$child -> id,'name' => $child -> loginID,'balance'=>number_format($child ->balance/100,2),'created_by' => $child -> created_by]; 
+        }
+        return $name;
     }
 
     //Show Sub Test Blade
@@ -278,6 +260,7 @@ class AdminController extends Controller
             $join ->on('users.id','=','wallets.holder_id');
         })
         ->select('users.*','wallets.balance as wBalance')
+        ->orderBy('loginID','asc')
         ->where('created_by',$id)
         ->get();
 
@@ -286,13 +269,32 @@ class AdminController extends Controller
 
     //Show Transactions (Personal)
     public function showTransactions($id){
-        $histories = DB::table('transactions')
-        ->leftjoin('users','transactions.payable_id','=','users.id')
-        ->select('transactions.*','users.loginID as holderName')
-        ->where('users.account_id',$id)
+        $user = User::where('account_id',$id)->first();
+
+        $deposits = DB::table('transactions')
+        ->where('meta','like','%deposit%')
         ->get();
 
-        return view('admin/transactionHistory',compact('histories'));
+        $withdraws = DB::table('transactions')
+        ->where('meta','like','%withdraw%')
+        ->get();
+
+        $transfers = DB::table('transfers')
+        ->join('transactions as deposit','transfers.deposit_id','=','deposit.id')
+        ->join('transactions as withdraw','transfers.withdraw_id','=','withdraw.id')
+        ->join('users as from','transfers.from_id','=','from.id')
+        ->join('users as to','transfers.to_id','=','to.id')
+        ->select('transfers.*','deposit.amount as dAmount','withdraw.amount as wAmount','from.loginID as fromName','to.loginID as toName')
+        ->get();
+
+        $histories = DB::table('transactions')
+        ->join('users as user','transactions.payable_id','=','user.id')
+        ->where('user.account_id',$id)
+        ->where('meta','like','%Testing%')
+        ->get();
+
+
+        return view('admin/transactionHistory',compact('histories','deposits','withdraws','transfers','user'));
     }
 
 }

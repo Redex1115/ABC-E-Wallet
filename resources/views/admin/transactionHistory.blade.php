@@ -35,29 +35,62 @@
                 <table class="table table-hover">
                     <thead class="thead-dark">
                         <tr>
-                            <th>#</th>
                             <th>UUID</th>
-                            <th>Description</th>
                             <th>Type</th>
                             <th>Pay/Receive</th>
                             <th>Created Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($histories as $history)
-                            <tr>
-                                <td>{{$loop -> iteration}}</td>
-                                <td>{{$history -> uuid}}</td>
-                                <td>{{$history -> meta}}</td>
-                                <td>{{$history -> type}}</td>
-                                @if($history -> amount >= 0)
-                                    <td><span class="text-success">+{{number_format($history -> amount/100,2)}}</span></td>
-                                @elseif($history -> amount < 0)
-                                    <td><span class="text-danger">{{number_format($history -> amount/100,2)}}</span></td>
-                                @endif
-                                <td>{{$history -> created_at}}</td>
-                            </tr>
+                        @foreach($deposits as $deposit)
+                            @if($user -> id == $deposit -> payable_id)
+                                <tr>
+                                    <td>{{$deposit -> uuid}}</td>
+                                    <td>{{$deposit -> type}}</td>
+                                    <td><span class="text-success" id="balance">+{{number_format($deposit -> amount/100,2)}}</span></td>
+                                    <td>{{$deposit -> created_at}}</td>
+                                </tr>
+                            @endif
                         @endforeach
+                        @foreach($withdraws as $withdraw)
+                            @if($user -> id == $withdraw -> payable_id)
+                                <tr>
+                                    <td>{{$withdraw -> uuid}}</td>
+                                    <td>{{$withdraw -> type}}</td>
+                                    <td><span class="text-danger" id="balance">{{number_format($withdraw -> amount/100,2)}}</span></td>
+                                    <td>{{$withdraw -> created_at}}</td>
+                                </tr>
+                            @endif
+                        @endforeach
+                        @foreach($transfers as $transfer)
+                            @if($user -> loginID == $transfer -> fromName || $user -> loginID == $transfer -> toName)
+                                @if($user -> loginID == $transfer -> fromName)
+                                    <tr>
+                                        <td>{{$transfer -> uuid}}</td>
+                                        <td>{{$transfer -> status}}</td>
+                                        <td><span class="text-success" id="balance">+{{number_format($transfer -> dAmount/100,2)}}</span></td>
+                                        <td>{{$transfer -> created_at}}</td>
+                                    </tr>
+                                @elseif($user -> loginID == $transfer -> toName)
+                                    <tr>
+                                        <td>{{$transfer -> uuid}}</td>
+                                        <td>{{$transfer -> status}}</td>
+                                        <td><span class="text-danger" id="balance">{{number_format($transfer -> wAmount/100,2)}}</span></td>
+                                        <td>{{$transfer -> created_at}}</td>
+                                    </tr>
+                                @endif
+                            @endif
+                        @endforeach
+                        <tr>
+                            <td></td>
+                            <td>Total: </td>
+                            @if($user->transactions->sum('amount') >= 0)
+                                <td><span class="text-success">+{{number_format($user->transactions->sum('amount')/100,2)}}</span></td>
+                            @else
+                                <td><span class="text-danger">{{number_format($user->transactions->sum('amount')/100,2)}}</span></td>
+                            @endif
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
