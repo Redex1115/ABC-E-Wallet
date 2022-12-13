@@ -46,7 +46,7 @@
                             @if($user -> id == $deposit -> payable_id)
                                 <tr>
                                     <td>{{$deposit -> uuid}}</td>
-                                    <td>{{$deposit -> type}}</td>
+                                    <td>{{ucfirst(trans($deposit -> type))}}</td>
                                     <td><span class="text-success" id="balance">+{{number_format($deposit -> amount/100,2)}}</span></td>
                                     <td>{{$deposit -> created_at}}</td>
                                 </tr>
@@ -56,7 +56,7 @@
                             @if($user -> id == $withdraw -> payable_id)
                                 <tr>
                                     <td>{{$withdraw -> uuid}}</td>
-                                    <td>{{$withdraw -> type}}</td>
+                                    <td>{{ucfirst(trans($withdraw -> type))}}</td>
                                     <td><span class="text-danger" id="balance">{{number_format($withdraw -> amount/100,2)}}</span></td>
                                     <td>{{$withdraw -> created_at}}</td>
                                 </tr>
@@ -67,14 +67,14 @@
                                 @if($user -> loginID == $transfer -> fromName)
                                     <tr>
                                         <td>{{$transfer -> uuid}}</td>
-                                        <td>{{$transfer -> status}}</td>
+                                        <td>{{ucfirst(trans($transfer -> status))}} From {{ucfirst(trans($transfer -> toName))}}</td>
                                         <td><span class="text-success" id="balance">+{{number_format($transfer -> dAmount/100,2)}}</span></td>
                                         <td>{{$transfer -> created_at}}</td>
                                     </tr>
                                 @elseif($user -> loginID == $transfer -> toName)
                                     <tr>
                                         <td>{{$transfer -> uuid}}</td>
-                                        <td>{{$transfer -> status}}</td>
+                                        <td>{{ucfirst(trans($transfer -> status))}} To {{ucfirst(trans($transfer -> fromName))}}</td>
                                         <td><span class="text-danger" id="balance">{{number_format($transfer -> wAmount/100,2)}}</span></td>
                                         <td>{{$transfer -> created_at}}</td>
                                     </tr>
